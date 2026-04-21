@@ -98,10 +98,10 @@ setTask2((prev:any)=>{
 
 }
 
-const handleTask2Submit=(cardName:any,id:any)=>{
+const handleTask2Submit=()=>{
 
-setIsActiveId(id)
-setIsCollapse(false)
+// setIsActiveId(id)
+// setIsCollapse(false)
 
 if(task2?.newTask!=""){
 setTodos((prev:any)=>{
@@ -112,7 +112,7 @@ setTodos((prev:any)=>{
     ...prev,
     {
 task:task2?.newTask,
-period:cardName,
+period:task2.category,
 isDone:false,
 id:Date.now()
     }
@@ -129,7 +129,7 @@ setTask2((prev:any)=>{
   }
 })
 
-setIsActiveId(null)
+// setIsActiveId(null)
 
 }else{
   setErr2("Enter Your Task")
@@ -185,6 +185,10 @@ if(delId){
       {/* Todo Task Form Starts */}
       <div className="container my-3">
         <div className="row">
+          <div className="col-lg-12 my-2">
+
+            <h5 className="text-center">            <i className="fa-brands fa-trello fa-2xl" style={{color: "rgb(166, 17, 17)"}}></i> My Trello App</h5>
+          </div>
           <div className="col-lg-12">
            <form onSubmit={(e)=>{
 e.preventDefault()
@@ -269,7 +273,7 @@ handleCardSubmit()
           {cards.map((c,i)=>{
             return(
               <>
-          <div key={i} className="col-lg-4 my-3">
+          <div key={i} className="col-lg-4 my-2 overflow-hidden">
             <div
               className="card rounded "
               style={{ backgroundColor: "#215B63" }}
@@ -311,7 +315,7 @@ handleCardSubmit()
 
               </div>
               <div className="card-footer  d-flex">
-                <form onSubmit={(e)=>{
+                {/* <form onSubmit={(e)=>{
                   e.preventDefault()
    setIsActiveId(i.toString())
 handleTask2Submit(c.name,i.toString())
@@ -321,7 +325,15 @@ handleTask2Submit(c.name,i.toString())
  />
                 <button type="submit" className="btn btn-light"  >Add Task</button>
                 </div>
-                </form>
+                </form> */}
+                <button className="btn btn-dark" data-bs-target="#taskmodel" data-bs-toggle="modal" onClick={()=>{
+                  setTask2((prev)=>{
+                    return{
+                      ...prev,
+                      category:c.name
+                    }
+                  })
+                }}>+</button>
               </div>
 
             </div>
@@ -368,6 +380,42 @@ handleTask2Submit(c.name,i.toString())
     </div>
   </div>
 </div>
+
+
+{/* =============================Model Box For Task Submit======== */}
+
+<div className="modal"  role="dialog" id="taskmodel" style={{marginTop:"150px"}}>
+  <div className="modal-dialog" role="document">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h5 className="modal-title">Add New Task</h5>
+        {/* <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> */}
+      </div>
+      <div className="modal-body">
+
+    <form onSubmit={(e)=>{
+                  e.preventDefault()
+
+handleTask2Submit()
+                }}>
+                  <div>
+                <input placeholder="Enter a New Task" name="newTask" value={task2?.newTask}  type="text" className="form-control  mx-1"  onChange={handleTask2Change} />
+
+<input  name="category" value={task2.category}  type="hidden" className="form-control  mx-1"  onChange={handleTask2Change} />
+
+                <button type="submit" className="btn btn-dark my-3" data-bs-dismiss="modal"  >Add Task</button>
+                </div>
+                </form>
+                
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
 
 
 
