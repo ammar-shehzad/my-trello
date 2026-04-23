@@ -1,26 +1,64 @@
 "use client";
 import Image from "next/image";
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { todo } from "node:test";
 
 export default function Home() {
-  let [task, setTask] = useState<{ newTask: any; category: any }>();
-    let [task2, setTask2] = useState<{ newTask: any; category: any }>({newTask:"",category:""});
+  let [task, setTask] = useState<{ newTask: any; category: any }>({newTask:"",category:""});
+  let [task2, setTask2] = useState<{ newTask: any; category: any }>({
+    newTask: "",
+    category: "",
+  });
 
-    let [todos,setTodos]=useState<{task:string,period:string,isDone:boolean,id:any}[]>([])
-  let [todos1, setTodos1] = useState<
-  {task: string; period: string; isDone: boolean}[]
+  let [todos, setTodos] = useState<
+    { task: string; period: string; isDone: boolean; id: any }[]
   >([]);
-  let [cardName,setCardName]=useState<{name:string}>({name:""})
-  let [cards,setCards]=useState<{name:string,color:any}[]>([{name:"today",color:"#533F04"},{name:"this week",color:"#19573D"},{name:"later",color:"#101204"}])
-let [err,setErr]=useState("")
-let [err2,setErr2]=useState("")
-let [isCollapse,setIsCollapse]=useState<boolean>(true)
-let[isActiveId,setIsActiveId]=useState<string|null>(null)
-let [editTask,setEditTask]=useState<{task:string,period:string,id:any}>({task:"",period:"",id:""})
+  let [todos1, setTodos1] = useState<
+    { task: string; period: string; isDone: boolean }[]
+  >([]);
+  let [cardName, setCardName] = useState<{ name: string }>({ name: "" });
+  let [cards, setCards] = useState<{ name: string; color: any }[]>([
+    { name: "today", color: "#533F04" },
+    { name: "this week", color: "#19573D" },
+    { name: "later", color: "#101204" },
+  ]);
+  let [err, setErr] = useState("");
+  let [err2, setErr2] = useState("");
+  let [isCollapse, setIsCollapse] = useState<boolean>(true);
+  let [isActiveId, setIsActiveId] = useState<string | null>(null);
+  let [editTask, setEditTask] = useState<{
+    task: string;
+    period: string;
+    id: any;
+  }>({ task: "", period: "", id: "" });
 
   let TodayTask = todos.filter((todos) => todos.period == "today");
   let LaterTask = todos.filter((todos) => todos.period == "later");
   let thisweekTask = todos.filter((todos) => todos.period == "this week");
+
+  let modal=document.getElementById("taskmodel") as HTMLDialogElement;
+
+  let taskEditmodel=document.getElementById(
+    "taskEditmodel",
+  ) as HTMLDialogElement;
+
+  modal?.addEventListener('click',e=>{
+    if(e.target==modal) modal.close()
+  })
+
+  taskEditmodel?.addEventListener('click',e=>{
+    if(e.target==taskEditmodel) taskEditmodel.close()
+  })
+
+
+
+// taskEditmodel.addEventListener('click',()=>{
+
+// taskEditmodel.close()
+// })
+
+
 
   let handleInputChange = (e: any) => {
     let { name, value } = e.target;
@@ -36,286 +74,296 @@ let [editTask,setEditTask]=useState<{task:string,period:string,id:any}>({task:""
   };
 
   const handleTaskSubmit = () => {
-    setTodos((prev:any) => {
+   if(task.newTask!=""){
+        setTodos((prev: any) => {
       return [
         ...prev,
-        { id:Date.now(),task: task?.newTask, period: task?.category, isDone: false },
+        {
+          id: Date.now(),
+          task: task?.newTask,
+          period: task?.category,
+          isDone: false,
+        },
       ];
+    });
+    toast.success("Task Added Successfully")
+   }else{
+    toast.error("Fill The Feild")
+   }
+
+  };
+
+  const handleInputCardChange = (e: any) => {
+    setCardName({ name: e.target.value });
+  };
+
+  const handleCardSubmit = () => {
+    if (cardName.name == "") {
+      
+      toast.error("Fill The Feild")
+    } else {
+      let randomCardColor = Math.floor(Math.random() * 0xffffff)
+        .toString(16)
+        .padStart(6, "0");
+
+      let randomColorComplete = "#" + randomCardColor;
+
+      setCards((prev: any) => {
+        return [
+          ...prev,
+          {
+            name: cardName?.name,
+            color: randomColorComplete,
+          },
+        ];
+      });
+
+      setCardName({ name: "" });
+      setErr("");
+      toast.success("Card Added Successfully")
+    }
+  };
+
+  const handleTask2Change = (e: any) => {
+    let { name, value } = e.target;
+
+    setTask2((prev: any) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
     });
   };
 
+  const handleTask2Submit = () => {
+    // setIsActiveId(id)
+    // setIsCollapse(false)
 
-const handleInputCardChange=(e:any)=>{
+    if (task2?.newTask != "") {
+      setTodos((prev: any) => {
+        return [
+          ...prev,
+          {
+            task: task2?.newTask,
+            period: task2.category,
+            isDone: false,
+            id: Date.now(),
+          },
+        ];
+      });
 
-setCardName(
-  {name:e.target.value}
-)
+      setTask2((prev: any) => {
+        return {
+          ...prev,
+          newTask: "",
+        };
+      });
+      toast.success("Task Added Successfully")
 
-}
-
-
-const handleCardSubmit=()=>{
-
-if(cardName.name==""){
-setErr("Fill The Feild")
-}else{
-
-  let randomCardColor=Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')
-
-let randomColorComplete='#'+randomCardColor
-
-setCards((prev:any)=>{
-
-  return[
-    ...prev,
-    {
-name:cardName?.name,
-color:randomColorComplete
-
+      // setIsActiveId(null)
+    } else {
+      setErr2("Enter Your Task");
     }
-  ]
-})
+  };
 
-setCardName({name:""})
-setErr("")
+  const handleEditTaskChange = (e: any) => {
+    let { name, value } = e.target;
 
-}
+    setEditTask({
+      ...editTask,
+      [name]: value,
+    });
+  };
 
+  const handleTaskEdit = (id: any) => {
+    if (editTask?.task != "") {
+      setTodos((prev) => {
+        return prev.map((t, i) => {
+          return t.id == id ? { ...t, task: editTask?.task ?? t.task } : t;
+        });
+      });
 
-
-}
-
-
-const handleTask2Change=(e:any)=>{
-let {name,value}=e.target
-
-setTask2((prev:any)=>{
-  return{
-    ...prev,
-    [name]:value
-  }
-})
-
-}
-
-const handleTask2Submit=()=>{
-
-// setIsActiveId(id)
-// setIsCollapse(false)
-
-if(task2?.newTask!=""){
-setTodos((prev:any)=>{
-  return(
-    
-    
-    [
-    ...prev,
-    {
-task:task2?.newTask,
-period:task2.category,
-isDone:false,
-id:Date.now()
+      toast.success("Task Edit Successfully")
+      
     }
-  ]
+  };
 
-
-)
-})
-
-setTask2((prev:any)=>{
-  return{
-    ...prev,
-    newTask:""
-  }
-})
-
-// setIsActiveId(null)
-
-}else{
-  setErr2("Enter Your Task")
-
-}
-
-
-
-}
-
-
-
-const handleEditTaskChange=(e:any)=>{
-let {name,value}=e.target
-
-setEditTask({
-  ...editTask,
-  [name]:value
-})
-
-}
-
-const handleTaskEdit=(id:any)=>{
-
-if(editTask?.task!=""){
-setTodos((prev)=>{
-return prev.map((t,i)=>{
-   return t.id==id?
-    {...t,task:editTask?.task??t.task}:
-    t
-  })
-
-
-})
-
-alert("Task Edited Successfully !")
-
-}
-}
-
-const deletetask=(delId:any)=>{
-if(delId){
-  setTodos(prevTodo=>prevTodo.filter(item=>item.id!=delId))
-  alert("Task Deleted Successfully")
-}
-
-
-}
-
+  const deletetask = (delId: any) => {
+    if (delId) {
+      setTodos((prevTodo) => prevTodo.filter((item) => item.id != delId));
+toast.success("Task Deleted Successfully")    }
+  };
 
   return (
     <>
       {/* Todo Task Form Starts */}
-      <div className="container my-3">
-        <div className="row">
-          <div className="col-lg-12 my-2">
-
-            <h5 className="text-center">            <i className="fa-brands fa-trello fa-2xl" style={{color: "rgb(166, 17, 17)"}}></i> My Trello App</h5>
+      <div className="container mx-auto ">
+        <div className="grid grid-cols-12 ">
+          <div className="col-span-12 my-2">
+            <h5 className="text-center">
+              {" "}
+              <i
+                className="fa-brands fa-trello fa-2xl"
+                style={{ color: "rgb(166, 17, 17)" }}
+              ></i>{" "}
+              My Trello App
+            </h5>
           </div>
-          <div className="col-lg-12">
-           <form onSubmit={(e)=>{
-e.preventDefault()
-handleTaskSubmit()            
-           }}>
-            <div className="form-group d-flex ">
-              <input
-                type="text"
-                className="form-control mx-2"
-                placeholder="Your Task Here"
-                value={task?.newTask}
-                name="newTask"
-                onChange={handleInputChange}
-              />
-              <select
-                name="category"
-                value={task?.category}
-                id=""
-                className="form-control mx-2"
-                onChange={handleInputChange}
-              >
-                <option>Select One Category</option>
-                {cards.map((c,i)=>{
-            return(
-             <>
-             <option value={c.name}>{c.name}</option>
-             </>
-            )
-          })}
-              </select>
-              <button type="submit" className="btn btn-dark mx-2">
-                Save
-              </button>
-            </div>
-</form>
-
+          <div className="col-span-12 my-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleTaskSubmit();
+              }}
+            >
+              <div className="form-group grid grid-cols-12 gap-5 mx-50 ">
+                <div className="col-span-5">
+                  <input
+                    type="text"
+                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Your Task Here"
+                    value={task?.newTask}
+                    name="newTask"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="col-span-5">
+                  <select
+                    name="category"
+                    value={task?.category}
+                    id=""
+                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={handleInputChange}
+                  >
+                    <option>Select One Category</option>
+                    {cards.map((c, i) => {
+                      return (
+                        <>
+                          <option value={c.name}>{c.name}</option>
+                        </>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <button
+                    type="submit"
+                    className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
 
-<div className="row">
-  <div className="col-lg-3"></div>
-  <div className="col-lg-6 my-3">
-              <form onSubmit={(e)=>{
-e.preventDefault()
-handleCardSubmit()
-              }}>
-      <div className="form-group d-flex ">
+        <div className="grid grid-cols-12 gap-5 my-2">
+          <div className="col-span-3"></div>
+          <div className="col-span-6">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCardSubmit();
+              }}
+            >
+              <div className="grid grid-cols-12">
+                <div className="col-span-10">
+                  <input
+                    type="text"
+                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Your Task Here"
+                    value={cardName?.name}
+                    onChange={handleInputCardChange}
+                  />
+                </div>
 
-              
-              <input
-                type="text"
-                className="form-control mx-2"
-                placeholder="Your Task Here"
-                value={cardName?.name}
-                
-                onChange={handleInputCardChange}
-              />
-             
-              <button type="submit" className="btn btn-dark mx-2" >
-                Add Card
-              </button>
-            </div>
-              </form>
-                          <span><p className="text-danger">{err}</p></span>
-
-  </div>
-  <div className="col-lg-3"></div>
-
-</div>
-
+                <div className="col-span-2 ml-1">
+                  <button
+                    type="submit"
+                    className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                  >
+                    Add Card
+                  </button>
+                </div>
+              </div>
+            </form>
+            <span>
+              <p className="text-danger">{err}</p>
+            </span>
+          </div>
+          <div className="col-span-3"></div>
+        </div>
       </div>
       {/* Todo Task Form Ends */}
 
-   
-
-
-
-{/* ==========================Starting Changes============ */}
-  {/* Todo New Cards Starts */}
-      <div className="container ">
-        <div className="row rounded  p-1 flex-row flex-nowrap " style={{overflowX:"scroll",backgroundColor:"#124170"}}>
-          {cards.map((c,i)=>{
-            return(
+      {/* ==========================Starting Changes============ */}
+      {/* Todo New Cards Starts */}
+      <div className="container mx-auto my-3">
+        <div
+          className="grid grid-flow-col auto-cols-[100px] overflow-x-auto  gap-1 rounded-lg  px-4 py-1  "
+          style={{ overflowX: "scroll", backgroundColor: "#124170" }}
+        >
+          {cards.map((c, i) => {
+            return (
               <>
-          <div key={i} className="col-lg-4 my-2 overflow-hidden">
-            <div
-              className="card rounded "
-              style={{ backgroundColor: "#215B63" }}
-            >
-              <div className="card-body text-light" style={{height:"50vh",overflowY:"scroll"}}>
-                <h4 className="card-title">{c.name}</h4>
-                <ul className="list-group list-group-flush">
-                  
-                  {todos.filter(todos=>todos.period==c.name).map((t, i) => {
-                    return (
-                      <>
-                        <li key={t.id} className="list-group-item rounded d-flex justify-content-between my-1">
-                          {t.task}
-                          
-                          
-                          <div className="form-check">
-                              <span onClick={()=>{
-                                setEditTask({task:t.task,period:t.period,id:t.id})
-                              }} data-bs-target="#editmodel" data-bs-toggle="modal"><i className="fa-solid fa-pen mx-1" style={{color: "rgb(0,255,0)"}}></i></span>
-                          <span onClick={()=>{deletetask(t.id)}}>
-                            <i className="fa-solid fa-delete-left" style={{color: "rgb(255,0,0)"}}></i>
-                          </span>
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="checkDefault"
-                            />
-                          </div>
-                        </li>
-                      </>
-                    );
-                  })}
-
-
-
-                </ul>
-
-
-              </div>
-              <div className="card-footer  d-flex">
-                {/* <form onSubmit={(e)=>{
+                <div key={i} className="col-span-4 my-2 overflow-hidden">
+                  <div
+                    className="max-w-sm  rounded-lg shadow-md shadow-lg p-6 overflow-hidden"
+                    style={{ backgroundColor: "#215B63" }}
+                  >
+                    <div style={{ height: "50vh", overflowY: "scroll" }}>
+                      <h4 className="font-bold text-2xl capitalize text-white">
+                        {c.name}
+                      </h4>
+                      <ul className="list-none space-y-2 mt-6 mr-7">
+                        {todos
+                          .filter((todos) => todos.period == c.name)
+                          .map((t, i) => {
+                            return (
+                              <>
+                                <li
+                                  key={t.id}
+                                  className="grid grid-cols-12 gap-2 bg-white mx-1 rounded py-2 px-3"
+                                >
+                                  <div className="col-span-9 capitalize"> {t.task}</div>
+                                 
+                                  <div className="col-span-3 flex flex-row">
+                                   <span
+                                      onClick={() => {
+                                        taskEditmodel.showModal();
+                                        setEditTask({
+                                          task: t.task,
+                                          period: t.period,
+                                          id: t.id,
+                                        });
+                                      }}
+                                      data-bs-target="#editmodel"
+                                      data-bs-toggle="modal"
+                                    >
+                                      <i
+                                        className="fa-solid fa-pen-to-square" style={{color: "rgb(15, 125, 6)"}}
+                                      ></i>
+                                    </span>
+                                    <span
+                                      onClick={() => {
+                                        deletetask(t.id);
+                                      }}
+                                    >
+                                      <i
+                                        className="fa-solid fa-delete-left"
+                                        style={{ color: "rgb(255,0,0)" }}
+                                      ></i>
+                                    </span>
+                                  </div>
+                                </li>
+                              </>
+                            );
+                          })}
+                      </ul>
+                    </div>
+                    <div className="card-footer  d-flex">
+                      {/* <form onSubmit={(e)=>{
                   e.preventDefault()
    setIsActiveId(i.toString())
 handleTask2Submit(c.name,i.toString())
@@ -326,101 +374,199 @@ handleTask2Submit(c.name,i.toString())
                 <button type="submit" className="btn btn-light"  >Add Task</button>
                 </div>
                 </form> */}
-                <button className="btn btn-dark" data-bs-target="#taskmodel" data-bs-toggle="modal" onClick={()=>{
-                  setTask2((prev)=>{
-                    return{
-                      ...prev,
-                      category:c.name
-                    }
-                  })
-                }}>+</button>
-              </div>
+                      <button
+                        className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                        data-bs-target="#taskmodel"
+                        data-bs-toggle="modal"
+                        onClick={() => {
+                          setTask2((prev) => {
+                            modal = document.getElementById(
+                              "taskmodel",
+                            ) as HTMLDialogElement;
 
-            </div>
-          </div>              
+                            modal.showModal();
+                            return {
+                              ...prev,
+                              category: c.name,
+                            };
+                          });
+                        }}
+                        id="openModal"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </>
-            )
+            );
           })}
-
-       
         </div>
       </div>
 
       {/* Todo New Cards Ends */}
+      {/* ==========================tailwind modal starts============== */}
+      {/* NEW TASK STARTS */}
 
+      <dialog
+        id="taskmodel" className="m-auto rounded bg-white p-5 shadow-xl backdrop:bg-black/50 backdrop:blur-sm"
+         >
 
+      <div className="container mx-auto">
+          <div className="grid grid-cols-12">
+             <div className="col-span-12">
+              
+              <div className="grid grid-cols-12">
+              <div className="col-span-10">
+                <h3 className="font-bold text-2xl">Enter A New Task</h3>
+              </div>
+              <div className="col-span-2">
+                <button
+                  className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                  onClick={() => {
+                    modal.close();
+                  }}
+                >
+                  X
+                </button>
+              </div>
+            </div>
 
+            </div>
+            <div className="col-span-4"></div>
+            <div className="col-span-4">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
 
-{/*================= model box=============================== */}
+                  handleTask2Submit();
 
+                  modal.close();
+                }}
+              >
+                <div className="flex flex-col">
+                  <input
+                    placeholder="Enter a New Task"
+                    name="newTask"
+                    value={task2?.newTask}
+                    type="text"
+                    onChange={handleTask2Change}
+                    className="block my-5 w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
 
-<div className="modal"  role="dialog" id="editmodel" style={{marginTop:"150px"}}>
-  <div className="modal-dialog" role="document">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h5 className="modal-title">Edit Task</h5>
-        {/* <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> */}
-      </div>
-      <div className="modal-body">
+                  <input
+                    name="category"
+                    value={task2.category}
+                    type="hidden"
+                    onChange={handleTask2Change}
+                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
 
-<form onSubmit={(e)=>{
-  e.preventDefault()
-  handleTaskEdit(editTask?.id)
-}}>
-  <input type="text" name="task" className="form-control my-2" value={editTask?.task} onChange={handleEditTaskChange}/>
-  <input type="hidden" name="period" className="form-control my-2" value={editTask?.period} onChange={handleEditTaskChange} />
-   <input type="hidden" name="id" className="form-control my-2" value={editTask?.id} onChange={handleEditTaskChange}/>
-
-  <button type="submit" className="btn btn-primary" data-bs-dismiss="modal" >Save</button>
-</form>
-      </div>
-      
-    </div>
-  </div>
-</div>
-
-
-{/* =============================Model Box For Task Submit======== */}
-
-<div className="modal"  role="dialog" id="taskmodel" style={{marginTop:"150px"}}>
-  <div className="modal-dialog" role="document">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h5 className="modal-title">Add New Task</h5>
-        {/* <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> */}
-      </div>
-      <div className="modal-body">
-
-    <form onSubmit={(e)=>{
-                  e.preventDefault()
-
-handleTask2Submit()
-                }}>
-                  <div>
-                <input placeholder="Enter a New Task" name="newTask" value={task2?.newTask}  type="text" className="form-control  mx-1"  onChange={handleTask2Change} />
-
-<input  name="category" value={task2.category}  type="hidden" className="form-control  mx-1"  onChange={handleTask2Change} />
-
-                <button type="submit" className="btn btn-dark my-3" data-bs-dismiss="modal"  >Add Task</button>
+                  <button
+                    type="submit"
+                    data-bs-dismiss="modal"
+                    className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                  >
+                    Add Task
+                  </button>
                 </div>
-                </form>
-                
-      </div>
-      
-    </div>
-  </div>
-</div>
+              </form>
+            </div>
+            <div className="col-span-4"></div>
+          </div>
+        </div>
 
 
 
+  
+
+      </dialog>
+
+      {/* NEW TASK ENDS */}
+
+      {/* EDIT TASK STARTS */}
+
+      <dialog
+        id="taskEditmodel"
+        className="m-auto rounded bg-white p-5 shadow-xl backdrop:bg-black/50 backdrop:blur-sm"
+      >
+        <div className="container mx-auto">
+          <div className="grid grid-cols-12">
+            <div className="col-span-12">
+              
+              <div className="grid grid-cols-12">
+              <div className="col-span-10">
+                <h1 className="font-bold text-2xl">Edit Your Task</h1>
+              </div>
+              <div className="col-span-2">
+                <button
+                  className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                  onClick={() => {
+                    taskEditmodel.close();
+                  }}
+                >
+                  X
+                </button>
+              </div>
+            </div>
+
+            </div>
+            
+            <div className="col-span-4"></div>
+            <div className="col-span-4">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleTaskEdit(editTask?.id);
+                  taskEditmodel.close();
+                }}
+              >
+                <div className="flex flex-col">
+                  <input
+                    type="text"
+                    name="task"
+                    value={editTask?.task}
+                    onChange={handleEditTaskChange}
+                    className="block w-full px-4 my-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="hidden"
+                    name="period"
+                    value={editTask?.period}
+                    onChange={handleEditTaskChange}
+                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="hidden"
+                    name="id"
+                    value={editTask?.id}
+                    onChange={handleEditTaskChange}
+                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+
+                  <button
+                    type="submit"
+                    data-bs-dismiss="modal"
+                    className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+              
+            </div>
+            <div className="col-span-4"></div>
+          </div>
+        </div>
+      </dialog>
+
+      {/* EDIT TASK ENDS */}
+
+      {/* ==========================tailwind modal Ends============== */}
+
+      {/*================= model box=============================== */}
 
 
     </>
   );
 }
-
-
