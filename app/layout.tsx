@@ -18,6 +18,8 @@ export default function RootLayout({
   
     >
 <head>
+        <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" 
+    rel="stylesheet"></link>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
 
 </head>
