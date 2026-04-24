@@ -381,7 +381,7 @@ return newTodos
 
 <Droppable droppableId={c.name}>
 
-{(provided)=>(
+{(provided,snapshot)=>(
 
      <div
                     className="  rounded-lg shadow-md shadow-lg  overflow-hidden"
@@ -393,7 +393,9 @@ return newTodos
                       <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB border-b-2 border-blue-500 py-1">
                         {c.name}
                       </h4>
-                      <ul className="list-none space-y-2 mt-6 mr-7">
+                      <ul className="list-none space-y-2 mt-6 mr-7"
+                      
+                      >
                         {todos
                           .filter((todos) => todos.period == c.name)
                           .map((t, i) => {
@@ -404,6 +406,7 @@ return newTodos
   <li
                                   key={t.id}
                                   className="grid grid-cols-12 gap-2  ml-5 rounded py-2 px-3 bg-white shadow-lg shadow-black/70"
+                                  
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
@@ -451,8 +454,8 @@ return newTodos
                               </>
                             );
                           })}
-                          {provided.placeholder}
                       </ul>
+                          {provided.placeholder}
                     </div>
                     <div className="card-footer  d-flex">
                       {/* <form onSubmit={(e)=>{
