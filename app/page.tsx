@@ -3,6 +3,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { todo } from "node:test";
+import { DragDropContext,Droppable,Draggable,DropResult } from "@hello-pangea/dnd"; 
 
 export default function Home() {
   let [task, setTask] = useState<{ newTask: any; category: any }>({newTask:"",category:""});
@@ -14,6 +15,7 @@ export default function Home() {
   let [todos, setTodos] = useState<
     { task: string; period: string; isDone: boolean; id: any }[]
   >([]);
+
   let [todos1, setTodos1] = useState<
     { task: string; period: string; isDone: boolean }[]
   >([]);
@@ -33,6 +35,9 @@ export default function Home() {
     id: any;
   }>({ task: "", period: "", id: "" });
 
+  let [boardData,setBoardData]=useState<{ task: string; period: string; isDone: boolean; id: any }[]>(todos)
+  
+  
   let TodayTask = todos.filter((todos) => todos.period == "today");
   let LaterTask = todos.filter((todos) => todos.period == "later");
   let thisweekTask = todos.filter((todos) => todos.period == "this week");
@@ -194,6 +199,69 @@ export default function Home() {
 toast.success("Task Deleted Successfully")    }
   };
 
+
+
+const onDragEnd=(result:any)=>{
+const {source,destination,draggableId}=result
+if(!destination) return
+
+if(destination.droppableId===source.droppableId && destination.index===source.index) return
+
+// let sourceColumnName=source.droppableId
+// let sourceDestName=destination.droppableId
+
+let moveTask=todos.find(t=>t.id==draggableId)
+
+if(!moveTask) return
+
+setTodos((prevtodos)=>{
+let newTodos=Array.from(prevtodos)
+
+const taskIndex=newTodos.findIndex(t=>t.id==draggableId)
+if(taskIndex===-1) return prevtodos 
+
+const updateTask={
+  ...newTodos[taskIndex],
+period:destination.droppableId  
+}
+
+newTodos.splice(taskIndex,1)
+const destcolumn=newTodos.filter(t=>t.period==destination.droppableId)
+
+const targetItem=destcolumn[destination.index]
+const insertedAt=targetItem? newTodos.indexOf(targetItem):newTodos.length
+
+newTodos.splice(insertedAt,0,updateTask)
+
+
+// const [moveIndex]=newTodos.splice(taskIndex,1)
+
+
+
+
+// newTodos.splice(destination.index,0,updateTask)
+
+
+// ====
+// newTodos[taskIndex]={...newTodos[taskIndex],period:sourceDestName}
+// =====
+
+
+return newTodos
+})
+
+
+
+
+} 
+
+// if(!result.destination) return
+
+// let items=Array.from(todos)
+// let [moveItems]=items.splice(result.source.index,1)
+// items.splice(result.destination.index,0,moveItems)
+// setTodos(items)
+
   return (
     <>
       {/* Todo Task Form Starts */}
@@ -232,7 +300,7 @@ toast.success("Task Deleted Successfully")    }
                     className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
                     onChange={handleInputChange}
                   >
-                    <option>Select One Category</option>
+                    <option  style={{color:"black"}}>Select One Category</option>
                     {cards.map((c, i) => {
                       return (
                         <>
@@ -297,7 +365,10 @@ toast.success("Task Deleted Successfully")    }
       {/* ==========================Starting Changes============ */}
       {/* Todo New Cards Starts */}
       <div className="container mx-auto my-3">
-        {/* ======hjhkjhjhhj======= */}
+        {/* ========yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy=============== */}
+
+<DragDropContext onDragEnd={onDragEnd}>
+
         <div
           className="grid grid-flow-col auto-cols-[100px] overflow-x-auto  gap-1 rounded-lg  px-4 py-1  "
           style={{ overflowX: "auto" }}
@@ -307,12 +378,19 @@ toast.success("Task Deleted Successfully")    }
               <>
                 <div key={i} className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden">
                   {/* ===this is card==== */}
-                  <div
-                    className="max-w-sm  rounded-lg shadow-md shadow-lg p-6 overflow-hidden"
+
+<Droppable droppableId={c.name}>
+
+{(provided)=>(
+
+     <div
+                    className="  rounded-lg shadow-md shadow-lg  overflow-hidden"
                     style={{ backgroundColor: "#FFFFFF" }}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
                   >
-                    <div style={{ height: "50vh", overflowY: "auto" }}>
-                      <h4 className="font-bold text-2xl capitalize #F9FAFB border-b-2 border-blue-500 py-1">
+                    <div   style={{ height: "50vh", overflowY: "auto" }}>
+                      <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB border-b-2 border-blue-500 py-1">
                         {c.name}
                       </h4>
                       <ul className="list-none space-y-2 mt-6 mr-7">
@@ -321,15 +399,22 @@ toast.success("Task Deleted Successfully")    }
                           .map((t, i) => {
                             return (
                               <>
-                                <li
+<Draggable key={t.id} draggableId={String(t.id)} index={i}>
+{(provided)=>(
+  <li
                                   key={t.id}
-                                  className="grid grid-cols-12 gap-2  mx-1 rounded py-2 px-3 bg-white shadow-lg shadow-black/70"
+                                  className="grid grid-cols-12 gap-2  ml-5 rounded py-2 px-3 bg-white shadow-lg shadow-black/70"
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                
                                   
                                 >
-                                  <div className="col-span-9 text-center capitalize"> {t.task}</div>
+                                  <div className="col-span-9"> {t.task}</div>
                                  
                                   <div className="col-span-3 flex flex-row">
                                    <span
+                                   style={{cursor:"default"}}
                                    className="mx-1"
                                       onClick={() => {
                                         taskEditmodel.showModal();
@@ -347,6 +432,7 @@ toast.success("Task Deleted Successfully")    }
                                       ></i>
                                     </span>
                                     <span
+                                    style={{cursor:"default"}}
                                       onClick={() => {
                                         deletetask(t.id);
                                       }}
@@ -358,9 +444,14 @@ toast.success("Task Deleted Successfully")    }
                                     </span>
                                   </div>
                                 </li>
+)}
+</Draggable>
+
+                              
                               </>
                             );
                           })}
+                          {provided.placeholder}
                       </ul>
                     </div>
                     <div className="card-footer  d-flex">
@@ -399,11 +490,21 @@ handleTask2Submit(c.name,i.toString())
                       </button>
                     </div>
                   </div>
+
+)}
+
+
+</Droppable>
+
+
+             
                 </div>
               </>
             );
           })}
         </div>
+</DragDropContext>
+
       </div>
 
       {/* Todo New Cards Ends */}
