@@ -197,15 +197,12 @@ toast.success("Task Deleted Successfully")    }
   return (
     <>
       {/* Todo Task Form Starts */}
-      <div className="container mx-auto ">
+      <div className="w-full bg-linear-to-r from-[#020344] to-[#28b8d5]
+       ">
         <div className="grid grid-cols-12 ">
           <div className="col-span-12 my-2">
-            <h5 className="text-center">
-              {" "}
-              <i
-                className="fa-brands fa-trello fa-2xl"
-                style={{ color: "rgb(166, 17, 17)" }}
-              ></i>{" "}
+            <h5 className="text-center font-semibold text-2xl text-white">
+         
               My Trello App
             </h5>
           </div>
@@ -220,7 +217,7 @@ toast.success("Task Deleted Successfully")    }
                 <div className="col-span-5">
                   <input
                     type="text"
-                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
                     placeholder="Your Task Here"
                     value={task?.newTask}
                     name="newTask"
@@ -232,14 +229,14 @@ toast.success("Task Deleted Successfully")    }
                     name="category"
                     value={task?.category}
                     id=""
-                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
                     onChange={handleInputChange}
                   >
                     <option>Select One Category</option>
                     {cards.map((c, i) => {
                       return (
                         <>
-                          <option value={c.name}>{c.name}</option>
+                          <option value={c.name} style={{color:"black"}} >{c.name}</option>
                         </>
                       );
                     })}
@@ -248,7 +245,7 @@ toast.success("Task Deleted Successfully")    }
                 <div className="col-span-2">
                   <button
                     type="submit"
-                    className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                    className="block px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
                   >
                     Save
                   </button>
@@ -271,7 +268,7 @@ toast.success("Task Deleted Successfully")    }
                 <div className="col-span-10">
                   <input
                     type="text"
-                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
                     placeholder="Your Task Here"
                     value={cardName?.name}
                     onChange={handleInputCardChange}
@@ -281,7 +278,7 @@ toast.success("Task Deleted Successfully")    }
                 <div className="col-span-2 ml-1">
                   <button
                     type="submit"
-                    className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                    className="block px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
                   >
                     Add Card
                   </button>
@@ -300,20 +297,22 @@ toast.success("Task Deleted Successfully")    }
       {/* ==========================Starting Changes============ */}
       {/* Todo New Cards Starts */}
       <div className="container mx-auto my-3">
+        {/* ======hjhkjhjhhj======= */}
         <div
           className="grid grid-flow-col auto-cols-[100px] overflow-x-auto  gap-1 rounded-lg  px-4 py-1  "
-          style={{ overflowX: "scroll", backgroundColor: "#124170" }}
+          style={{ overflowX: "auto" }}
         >
           {cards.map((c, i) => {
             return (
               <>
-                <div key={i} className="col-span-4 my-2 overflow-hidden">
+                <div key={i} className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden">
+                  {/* ===this is card==== */}
                   <div
                     className="max-w-sm  rounded-lg shadow-md shadow-lg p-6 overflow-hidden"
-                    style={{ backgroundColor: "#215B63" }}
+                    style={{ backgroundColor: "#FFFFFF" }}
                   >
-                    <div style={{ height: "50vh", overflowY: "scroll" }}>
-                      <h4 className="font-bold text-2xl capitalize text-white">
+                    <div style={{ height: "50vh", overflowY: "auto" }}>
+                      <h4 className="font-bold text-2xl capitalize #F9FAFB border-b-2 border-blue-500 py-1">
                         {c.name}
                       </h4>
                       <ul className="list-none space-y-2 mt-6 mr-7">
@@ -324,12 +323,14 @@ toast.success("Task Deleted Successfully")    }
                               <>
                                 <li
                                   key={t.id}
-                                  className="grid grid-cols-12 gap-2 bg-white mx-1 rounded py-2 px-3"
+                                  className="grid grid-cols-12 gap-2  mx-1 rounded py-2 px-3 bg-white shadow-lg shadow-black/70"
+                                  
                                 >
-                                  <div className="col-span-9 capitalize"> {t.task}</div>
+                                  <div className="col-span-9 text-center capitalize"> {t.task}</div>
                                  
                                   <div className="col-span-3 flex flex-row">
                                    <span
+                                   className="mx-1"
                                       onClick={() => {
                                         taskEditmodel.showModal();
                                         setEditTask({
@@ -342,7 +343,7 @@ toast.success("Task Deleted Successfully")    }
                                       data-bs-toggle="modal"
                                     >
                                       <i
-                                        className="fa-solid fa-pen-to-square" style={{color: "rgb(15, 125, 6)"}}
+                                        className="fa-solid fa-pen-to-square " style={{color: "rgb(15, 125, 6)"}}
                                       ></i>
                                     </span>
                                     <span
@@ -375,7 +376,8 @@ handleTask2Submit(c.name,i.toString())
                 </div>
                 </form> */}
                       <button
-                        className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                        className="block px-4 py-2  w-full bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 rounded-lg font-semibold text-white "
+                        
                         data-bs-target="#taskmodel"
                         data-bs-toggle="modal"
                         onClick={() => {
@@ -393,7 +395,7 @@ handleTask2Submit(c.name,i.toString())
                         }}
                         id="openModal"
                       >
-                        +
+                        Add New Task
                       </button>
                     </div>
                   </div>
@@ -409,7 +411,7 @@ handleTask2Submit(c.name,i.toString())
       {/* NEW TASK STARTS */}
 
       <dialog
-        id="taskmodel" className="m-auto rounded bg-white p-5 shadow-xl backdrop:bg-black/50 backdrop:blur-sm"
+        id="taskmodel" className="m-auto rounded bg-white p-5 shadow-xl backdrop:bg-black/50 backdrop:blur-sm bg-linear-to-r from-[#020344] to-[#28b8d5]"
          >
 
       <div className="container mx-auto">
@@ -418,11 +420,11 @@ handleTask2Submit(c.name,i.toString())
               
               <div className="grid grid-cols-12">
               <div className="col-span-10">
-                <h3 className="font-bold text-2xl">Enter A New Task</h3>
+                <h3 className="font-bold text-2xl text-white">Enter A New Task</h3>
               </div>
               <div className="col-span-2">
                 <button
-                  className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                  className="block px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
                   onClick={() => {
                     modal.close();
                   }}
@@ -451,7 +453,7 @@ handleTask2Submit(c.name,i.toString())
                     value={task2?.newTask}
                     type="text"
                     onChange={handleTask2Change}
-                    className="block my-5 w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
                   />
 
                   <input
@@ -465,7 +467,7 @@ handleTask2Submit(c.name,i.toString())
                   <button
                     type="submit"
                     data-bs-dismiss="modal"
-                    className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                    className="block px-4 py-2 my-3 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
                   >
                     Add Task
                   </button>
@@ -488,19 +490,19 @@ handleTask2Submit(c.name,i.toString())
 
       <dialog
         id="taskEditmodel"
-        className="m-auto rounded bg-white p-5 shadow-xl backdrop:bg-black/50 backdrop:blur-sm"
+        className="m-auto rounded bg-white p-5 shadow-xl backdrop:bg-black/50 backdrop:blur-sm bg-linear-to-r from-[#020344] to-[#28b8d5]"
       >
-        <div className="container mx-auto">
+        <div className="container mx-auto ">
           <div className="grid grid-cols-12">
             <div className="col-span-12">
               
               <div className="grid grid-cols-12">
               <div className="col-span-10">
-                <h1 className="font-bold text-2xl">Edit Your Task</h1>
+                <h1 className="font-bold text-2xl text-white">Edit Your Task</h1>
               </div>
               <div className="col-span-2">
                 <button
-                  className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                  className="block px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
                   onClick={() => {
                     taskEditmodel.close();
                   }}
@@ -527,14 +529,14 @@ handleTask2Submit(c.name,i.toString())
                     name="task"
                     value={editTask?.task}
                     onChange={handleEditTaskChange}
-                    className="block w-full px-4 my-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
                   />
                   <input
                     type="hidden"
                     name="period"
                     value={editTask?.period}
                     onChange={handleEditTaskChange}
-                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
                   />
                   <input
                     type="hidden"
@@ -547,7 +549,7 @@ handleTask2Submit(c.name,i.toString())
                   <button
                     type="submit"
                     data-bs-dismiss="modal"
-                    className="block px-4 py-2 bg-black text-amber-50 border border-gray-300 rounded-lg "
+                    className="block px-4 py-2 my-3 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
                   >
                     Save
                   </button>
