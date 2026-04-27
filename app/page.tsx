@@ -37,6 +37,8 @@ export default function Home() {
 
   let [boardData,setBoardData]=useState<{ task: string; period: string; isDone: boolean; id: any }[]>(todos)
   
+
+  let [deleteTask,setDeleteTask]=useState<{task:string,taskId:any}>()
   
   let TodayTask = todos.filter((todos) => todos.period == "today");
   let LaterTask = todos.filter((todos) => todos.period == "later");
@@ -56,6 +58,12 @@ export default function Home() {
     if(e.target==taskEditmodel) taskEditmodel.close()
   })
 
+  let deleteConfirmationModal=document.getElementById("deleteConfirmationModal") as HTMLDialogElement
+
+
+ deleteConfirmationModal?.addEventListener('click',e=>{
+  if(e.target==deleteConfirmationModal) deleteConfirmationModal.close()
+ })
 
 
 // taskEditmodel.addEventListener('click',()=>{
@@ -196,6 +204,7 @@ export default function Home() {
   const deletetask = (delId: any) => {
     if (delId) {
       setTodos((prevTodo) => prevTodo.filter((item) => item.id != delId));
+      deleteConfirmationModal.close()
 toast.success("Task Deleted Successfully")    }
   };
 
@@ -453,7 +462,9 @@ return newTodos
                                     <span
                                     style={{cursor:"default"}}
                                       onClick={() => {
-                                        deletetask(t.id);
+                                        setDeleteTask({task:t.task,taskId:t.id})
+                                        deleteConfirmationModal.showModal()
+                                        // deletetask(t.id);
                                       }}
                                     >
                                       <i
@@ -542,32 +553,34 @@ handleTask2Submit(c.name,i.toString())
       {/* NEW TASK STARTS */}
 
       <dialog
-        id="taskmodel" className="m-auto rounded bg-white p-5 shadow-xl backdrop:bg-black/50 backdrop:blur-sm bg-linear-to-r from-[#020344] to-[#28b8d5]"
+        id="taskmodel" className="w-full max-w-100 h-fit max-h-[90vh] overflow-y-auto rounded-lg p-6 m-auto"
          >
 
       <div className="container mx-auto">
           <div className="grid grid-cols-12">
              <div className="col-span-12">
               
-              <div className="grid grid-cols-12">
-              <div className="col-span-10">
-                <h3 className="font-bold text-2xl text-white">Enter A New Task</h3>
+              <div className="grid grid-cols-12 ">
+              <div className="col-span-10 ">
+                <h3 className="font-bold text-2xl text-[#020344]">Enter A New Task</h3>
               </div>
-              <div className="col-span-2">
-                <button
-                  className="block px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+              <div className="col-span-2 flex justify-end">
+                <span
+                className="font-bold"
+                  style={{cursor:"default"}}
                   onClick={() => {
                     modal.close();
                   }}
                 >
+                  
                   X
-                </button>
+                </span>
               </div>
             </div>
 
             </div>
-            <div className="col-span-4"></div>
-            <div className="col-span-4">
+            {/* <div className="col-span-4"></div> */}
+            <div className="col-span-12">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -577,7 +590,7 @@ handleTask2Submit(c.name,i.toString())
                   modal.close();
                 }}
               >
-                <div className="flex flex-col">
+                <div className="flex flex-col space-y-1 my-8">
                   <input
                     placeholder="Enter a New Task"
                     name="newTask"
@@ -585,7 +598,7 @@ handleTask2Submit(c.name,i.toString())
                     type="text"
                     onChange={handleTask2Change}
                     className="block w-full px-4 py-2 text-sm 
-                    text-white placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
+                    text-black placeholder:text-gray-700 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#020344]"
                   />
 
                   <input
@@ -599,14 +612,25 @@ handleTask2Submit(c.name,i.toString())
                   <button
                     type="submit"
                     data-bs-dismiss="modal"
-                    className="block px-4 py-2 my-3 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+                    className="block px-4 py-2 my-3 bg-linear-to-r from-[#020344] to-[#28b8d5] text-white border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
                   >
                     Add Task
                   </button>
+
+                     <button
+                className="font-bold px-4 py-2  mx-1 bg-gray-200 text-black border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+                  style={{cursor:"default"}}
+                  onClick={() => {
+                    modal.close();
+                  }}
+                >
+                  
+                  Cancel
+                </button>
                 </div>
               </form>
             </div>
-            <div className="col-span-4"></div>
+            {/* <div className="col-span-4"></div> */}
           </div>
         </div>
 
@@ -622,32 +646,34 @@ handleTask2Submit(c.name,i.toString())
 
       <dialog
         id="taskEditmodel"
-        className="m-auto rounded bg-white p-5 shadow-xl backdrop:bg-black/50 backdrop:blur-sm bg-linear-to-r from-[#020344] to-[#28b8d5]"
+        className="w-full max-w-100 h-fit max-h-[90vh] overflow-y-auto rounded-lg p-6 m-auto"
       >
         <div className="container mx-auto ">
           <div className="grid grid-cols-12">
             <div className="col-span-12">
               
-              <div className="grid grid-cols-12">
-              <div className="col-span-10">
-                <h1 className="font-bold text-2xl text-white">Edit Your Task</h1>
+              <div className="grid grid-cols-12 ">
+              <div className="col-span-10 ">
+                <h3 className="font-bold text-2xl text-[#020344]">Enter A New Task</h3>
               </div>
-              <div className="col-span-2">
-                <button
-                  className="block px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+              <div className="col-span-2 flex justify-end">
+                <span
+                className="font-bold"
+                  style={{cursor:"default"}}
                   onClick={() => {
                     taskEditmodel.close();
                   }}
                 >
+                  
                   X
-                </button>
+                </span>
               </div>
             </div>
 
             </div>
             
-            <div className="col-span-4"></div>
-            <div className="col-span-4">
+            
+            <div className="col-span-12">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -655,13 +681,14 @@ handleTask2Submit(c.name,i.toString())
                   taskEditmodel.close();
                 }}
               >
-                <div className="flex flex-col">
+                <div className="flex flex-col space-y-3 my-5">
                   <input
                     type="text"
                     name="task"
                     value={editTask?.task}
                     onChange={handleEditTaskChange}
-                    className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
+                    className="block w-full px-4 py-2 text-sm 
+                    text-black placeholder:text-gray-700 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#020344]"
                   />
                   <input
                     type="hidden"
@@ -681,20 +708,103 @@ handleTask2Submit(c.name,i.toString())
                   <button
                     type="submit"
                     data-bs-dismiss="modal"
-                    className="block px-4 py-2 my-3 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+                    className="block px-4 py-2 my-3 bg-linear-to-r from-[#020344] to-[#28b8d5] text-white border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
                   >
                     Save
                   </button>
+                       <button
+                className="font-bold px-4 py-2  mx-1 bg-gray-200 text-black border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+                  style={{cursor:"default"}}
+                  onClick={() => {
+                    taskEditmodel.close();
+                  }}
+                >
+                  
+                  Cancel
+                </button>
                 </div>
               </form>
               
             </div>
-            <div className="col-span-4"></div>
+            
           </div>
         </div>
       </dialog>
 
       {/* EDIT TASK ENDS */}
+
+
+{/* ========================DELETE TASK CONFIRMATION MODAL STARTS=========  */}
+
+    <dialog
+        id="deleteConfirmationModal"
+        className="w-full max-w-lg h-fit max-h-[90vh] overflow-y-auto rounded-lg p-6 m-auto"
+      >
+        <div className="container  ">
+          <div className="grid grid-cols-12">
+            <div className="col-span-12">
+              
+              <div className="grid grid-cols-12 m-0 py-3">
+              <div className="col-span-10">
+                <h6 className="font-bold text-2xl mx-2 text-[#020344]">Confirmation</h6>
+              </div>
+              <div className="col-span-2 flex justify-end">
+                <span 
+                  className=" font-semibold"
+                  onClick={() => {
+                    deleteConfirmationModal.close();
+                  }}
+                  style={{cursor:"default"}}
+                >
+                  X
+                </span>
+              </div>
+            </div>
+
+            </div>
+            
+
+            <div className="col-span-12  space-y-3 my-4">
+             <p className="font-bold  text-gray-500">Are You Sure Delete Task : {deleteTask?.task} ?</p>
+              
+
+                 
+              
+                
+            </div>
+            <div className="col-span-12 flex justify-end">
+
+ <button 
+                  className="px-4 py-2 my-3 mx-1 bg-gray-200 text-black border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+                  onClick={() => {
+                    deleteConfirmationModal.close();
+                  }}
+                  style={{cursor:"default"}}
+                >
+                  Cancel
+                </button>
+
+<button
+                    
+                    
+                    className="px-4 py-2 my-3 bg-red-500 text-white border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+                    onClick={()=>{
+                      deletetask(deleteTask?.taskId)
+
+                    }
+                    }
+                  >
+                    Confirm Delete
+                     <i className="fa-solid fa-trash fa-beat mx-1" style={{color: "rgb(255, 255, 255);"}}></i>
+                  </button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+
+{/* ========================DELETE TASK CONFIRMATION MODAL ENDS=========  */}
+
+
 
       {/* ==========================tailwind modal Ends============== */}
 
