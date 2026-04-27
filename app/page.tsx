@@ -202,13 +202,19 @@ toast.success("Task Deleted Successfully")    }
 
 
 const onDragEnd=(result:any)=>{
-const {source,destination,draggableId}=result
+const {source,destination,draggableId,type}=result
 if(!destination) return
 
 if(destination.droppableId===source.droppableId && destination.index===source.index) return
 
-// let sourceColumnName=source.droppableId
-// let sourceDestName=destination.droppableId
+
+if(type==="CARD"){
+let newCardsList=Array.from(cards)
+let [dragCard]=newCardsList.splice(source.index,1)
+newCardsList.splice(destination.index,0,dragCard)
+setCards(newCardsList)
+
+}
 
 let moveTask=todos.find(t=>t.id==draggableId)
 
@@ -232,19 +238,6 @@ const targetItem=destcolumn[destination.index]
 const insertedAt=targetItem? newTodos.indexOf(targetItem):newTodos.length
 
 newTodos.splice(insertedAt,0,updateTask)
-
-
-// const [moveIndex]=newTodos.splice(taskIndex,1)
-
-
-
-
-// newTodos.splice(destination.index,0,updateTask)
-
-
-// ====
-// newTodos[taskIndex]={...newTodos[taskIndex],period:sourceDestName}
-// =====
 
 
 return newTodos
@@ -366,21 +359,40 @@ return newTodos
       {/* Todo New Cards Starts */}
       <div className="container mx-auto my-3">
         {/* ========yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy=============== */}
-
+{/* =======================I am Starting Changes For Card Drag========= */}
 <DragDropContext onDragEnd={onDragEnd}>
 
-        <div
+{/* This Droppable is for  the cards start and inside it task droppable logic exist */}
+
+<Droppable droppableId="All-Columns" direction="horizontal" type="CARD" >
+{(provided)=>(
+
+<div
           className="grid grid-flow-col auto-cols-[100px] overflow-x-auto  gap-1 rounded-lg  px-4 py-1  "
           style={{ overflowX: "auto" }}
+          {...provided.droppableProps}
+          ref={provided.innerRef}
         >
         
           {cards.map((c, i) => {
             return (
-              <>
-                <div key={i} className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden">
+              <Draggable key={c.name} draggableId={c.name} index={i}>
+                {(provided)=>(
+  <div key={i} className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden"
+  ref={provided.innerRef}
+  {...provided.draggableProps}
+  >
                   {/* ===this is card==== */}
+<div {...provided.dragHandleProps}>
+     <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB border-b-2 border-blue-500 py-1">
+                        {c.name}
+                      </h4>
+</div>
 
-<Droppable droppableId={c.name}>
+
+{/* ===================This Dropable is for task starts================== */}
+
+<Droppable droppableId={c.name} type="TASK">
 
 {(provided,snapshot)=>(
 
@@ -390,10 +402,13 @@ return newTodos
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
+
+
+
+
+
                     <div   style={{ height: "50vh", overflowY: "auto" }}>
-                      <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB border-b-2 border-blue-500 py-1">
-                        {c.name}
-                      </h4>
+                   
                       <ul className="list-none space-y-2 mt-6 mr-7"
                       
                       >
@@ -499,14 +514,25 @@ handleTask2Submit(c.name,i.toString())
 
 
 </Droppable>
-
+{/* ===================This Dropable is for task Ends================== */}
 
              
                 </div>
-              </>
+                )}
+              
+              </Draggable>
             );
           })}
         </div>
+
+
+)}
+
+</Droppable>
+
+{/* This Droppable is for  the cards Ends and inside it task droppable logic exist */}
+
+        
 </DragDropContext>
 
       </div>
@@ -558,7 +584,8 @@ handleTask2Submit(c.name,i.toString())
                     value={task2?.newTask}
                     type="text"
                     onChange={handleTask2Change}
-                    className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
+                    className="block w-full px-4 py-2 text-sm 
+                    text-white placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
                   />
 
                   <input
