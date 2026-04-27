@@ -373,6 +373,7 @@ return newTodos
           className="grid grid-flow-col auto-cols-[100px] overflow-x-auto  gap-1 rounded-lg  px-4 py-1  "
           style={{ overflowX: "auto" }}
         >
+        
           {cards.map((c, i) => {
             return (
               <>
@@ -384,7 +385,7 @@ return newTodos
 {(provided,snapshot)=>(
 
      <div
-                    className="  rounded-lg shadow-md shadow-lg  overflow-hidden"
+                    className="rounded-lg shadow-md shadow-lg  overflow-hidden"
                     style={{ backgroundColor: "#FFFFFF" }}
                     ref={provided.innerRef}
                     {...provided.droppableProps}
