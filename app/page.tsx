@@ -4,6 +4,9 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { todo } from "node:test";
 import { DragDropContext,Droppable,Draggable,DropResult } from "@hello-pangea/dnd"; 
+import { supabase } from "@/utils/supabase/client";
+import { error } from "console";
+
 
 export default function Home() {
   let [task, setTask] = useState<{ newTask: any; category: any }>({newTask:"",category:""});
@@ -39,6 +42,8 @@ export default function Home() {
   
 
   let [deleteTask,setDeleteTask]=useState<{task:string,taskId:any}>()
+
+  let[ndata,setNdata]=useState([])
   
   let TodayTask = todos.filter((todos) => todos.period == "today");
   let LaterTask = todos.filter((todos) => todos.period == "later");
@@ -72,6 +77,63 @@ export default function Home() {
 // })
 
 
+// ===================for Fetching database===============
+
+
+
+
+
+
+
+
+  const fetchdata=async()=>{
+      const {data, error } = await supabase
+  .from('myTask')
+  .select('*')
+
+  if(data?.length){
+        setTodos((prev: any) => {
+
+// let newTodos=data.map((item)=>({
+//    id:item.id,
+//           task:item.task,
+//           period:item.period,
+//           isDone:item.isDone,
+
+// }))
+
+
+      return [
+        
+...data.map((item)=>({
+   id:item.id,
+          task:item.task,
+          period:item.period,
+          isDone:item.isDone,
+
+}))
+      ];
+    });
+
+
+  }
+
+
+// console.log(await supabase
+//   .from('employee')
+//   .select('*'))
+
+  }
+
+
+//   fetchdata()
+
+
+
+// ===================for Fetching database===============
+
+
+
 
   let handleInputChange = (e: any) => {
     let { name, value } = e.target;
@@ -85,21 +147,23 @@ export default function Home() {
 
     console.log(task);
   };
-
-  const handleTaskSubmit = () => {
+// ===========================starting changes for=================================== database=================================
+  const handleTaskSubmit =async() => {
    if(task.newTask!=""){
-        setTodos((prev: any) => {
-      return [
-        ...prev,
-        {
-          id: Date.now(),
-          task: task?.newTask,
-          period: task?.category,
-          isDone: false,
-        },
-      ];
-    });
+     
+    
+    const { error } = await supabase
+  .from('myTask')
+  .insert({ task:task.newTask,period:task.category,isDone:false})
+  if(error){
+    // toast.error(error.message)
+console.log(error.message)
+  }  else{
     toast.success("Task Added Successfully")
+    fetchdata()
+
+  }
+
    }else{
     toast.error("Fill The Feild")
    }
@@ -188,22 +252,47 @@ export default function Home() {
     });
   };
 
-  const handleTaskEdit = (id: any) => {
+  const handleTaskEdit = async(id: any) => {
     if (editTask?.task != "") {
-      setTodos((prev) => {
-        return prev.map((t, i) => {
-          return t.id == id ? { ...t, task: editTask?.task ?? t.task } : t;
-        });
-      });
+      // setTodos((prev) => {
+      //   return prev.map((t, i) => {
+      //     return t.id == id ? { ...t, task: editTask?.task ?? t.task } : t;
+      //   });
+      // });
 
-      toast.success("Task Edit Successfully")
+      const { error } = await supabase
+  .from('myTask')
+  .update({ task: editTask.task })
+  .eq('id', id)
+
+if(error){
+  toast.error(error.message)
+  
+}else{
+  toast.success("Task Edit Successfully")
+
+}
+
+fetchdata()
+
+
+
       
     }
   };
 
-  const deletetask = (delId: any) => {
+  const deletetask =async(delId: any) => {
     if (delId) {
-      setTodos((prevTodo) => prevTodo.filter((item) => item.id != delId));
+      // setTodos((prevTodo) => prevTodo.filter((item) => item.id != delId));
+
+      const {error} = await supabase
+  .from('myTask')
+  .delete()
+  .eq('id', delId)
+console.log(delId)
+if(error){
+  console.log(error.message)
+}
       deleteConfirmationModal.close()
 toast.success("Task Deleted Successfully")    }
   };
@@ -231,6 +320,7 @@ if(!moveTask) return
 
 setTodos((prevtodos)=>{
 let newTodos=Array.from(prevtodos)
+console.log(draggableId)
 
 const taskIndex=newTodos.findIndex(t=>t.id==draggableId)
 if(taskIndex===-1) return prevtodos 
@@ -257,15 +347,16 @@ return newTodos
 
 } 
 
-// if(!result.destination) return
 
-// let items=Array.from(todos)
-// let [moveItems]=items.splice(result.source.index,1)
-// items.splice(result.destination.index,0,moveItems)
-// setTodos(items)
+useEffect(()=>{
+  fetchdata()
+})
+
 
   return (
     <>
+ 
+    {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       {/* Todo Task Form Starts */}
       <div className="w-full bg-linear-to-r from-[#020344] to-[#28b8d5]
        ">
@@ -691,14 +782,14 @@ handleTask2Submit(c.name,i.toString())
                     text-black placeholder:text-gray-700 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#020344]"
                   />
                   <input
-                    type="hidden"
+                    type="text"
                     name="period"
                     value={editTask?.period}
                     onChange={handleEditTaskChange}
                     className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
                   />
                   <input
-                    type="hidden"
+                    type="text"
                     name="id"
                     value={editTask?.id}
                     onChange={handleEditTaskChange}
