@@ -24,10 +24,9 @@ export default function Home() {
     { task: string; period: string; isDone: boolean }[]
   >([]);
   let [cardName, setCardName] = useState<{ name: string }>({ name: "" });
-  let [cards, setCards] = useState<{ name: string; color: any }[]>([
-    { name: "today", color: "#533F04" },
-    { name: "this week", color: "#19573D" },
-    { name: "later", color: "#101204" },
+  let [cards, setCards] = useState<{ name: string,id:any}[]>([
+    { name: "today",id:0}
+  
   ]);
   let [err, setErr] = useState("");
   let [err2, setErr2] = useState("");
@@ -98,8 +97,6 @@ if(localStorage.getItem('user')){
   if(data?.length){
         setTodos((prev: any) => {
 
-
-
       return [
         
 ...data.map((item)=>({
@@ -116,11 +113,36 @@ if(localStorage.getItem('user')){
   }
 
 
+        const {data:cardData, error:cardError } = await supabase
+  .from('myCards')
+  .select('*').eq('userId',localStorage.getItem("user"))
+
+if(cardData?.length){
+
+  setCards((prev:any)=>{
+
+return[
+  {name:"today",id:0},
+  ...cardData.map((i)=>({
+name:i.cardName,
+id:i.id
+
+  }))
+]
+
+
+  })
+
+}
+
+
+
 // console.log(await supabase
 //   .from('employee')
 //   .select('*'))
   }else{
     setTodos([])
+    setCards([{name:"today",id:0}])
   }
   }
 
@@ -173,7 +195,7 @@ console.log(error.message)
     setCardName({ name: e.target.value });
   };
 
-  const handleCardSubmit = () => {
+  const handleCardSubmit =async() => {
     if (cardName.name == "") {
       
       toast.error("Fill The Feild")
@@ -194,9 +216,20 @@ console.log(error.message)
         ];
       });
 
+      const { error } = await supabase
+  .from('myCards')
+  .insert({'cardName':cardName.name,'userId':localStorage.getItem("user")})
+
+
+if(error){
+  toast.error(error.message)
+}else{
       setCardName({ name: "" });
       setErr("");
       toast.success("Card Added Successfully")
+}
+
+
     }
   };
 
