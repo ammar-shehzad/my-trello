@@ -6,6 +6,7 @@ import { todo } from "node:test";
 import { DragDropContext,Droppable,Draggable,DropResult } from "@hello-pangea/dnd"; 
 import { supabase } from "@/utils/supabase/client";
 import { error } from "console";
+import { useRouter } from "next/navigation";
 
 
 export default function Home() {
@@ -49,6 +50,7 @@ export default function Home() {
   let LaterTask = todos.filter((todos) => todos.period == "later");
   let thisweekTask = todos.filter((todos) => todos.period == "this week");
 
+  let router=useRouter()
   let modal=document.getElementById("taskmodel") as HTMLDialogElement;
 
   let taskEditmodel=document.getElementById(
@@ -87,9 +89,11 @@ export default function Home() {
 
 
   const fetchdata=async()=>{
+
+if(localStorage.getItem('user')){
       const {data, error } = await supabase
   .from('myTask')
-  .select('*')
+  .select('*').eq('userId',localStorage.getItem("user"))
 
   if(data?.length){
         setTodos((prev: any) => {
@@ -115,7 +119,9 @@ export default function Home() {
 // console.log(await supabase
 //   .from('employee')
 //   .select('*'))
-
+  }else{
+    setTodos([])
+  }
   }
 
 
@@ -147,7 +153,7 @@ export default function Home() {
     
     const { error } = await supabase
   .from('myTask')
-  .insert({ task:task.newTask,period:task.category,isDone:false})
+  .insert({ task:task.newTask,period:task.category,isDone:false,userId:localStorage.getItem("user")})
   if(error){
     // toast.error(error.message)
 console.log(error.message)
@@ -225,13 +231,13 @@ console.log(error.message)
 
     const { error } = await supabase
   .from('myTask')
-  .insert({ task:task2.newTask,period:task2.category,isDone:false})
+  .insert({ task:task2.newTask,period:task2.category,isDone:false,userId:localStorage.getItem("user")})
   if(error){
     // toast.error(error.message)
 console.log(error.message)
   }  else{
     toast.success("Task Added Successfully")
-    // fetchdata()
+    fetchdata()
 
   }
 
@@ -300,7 +306,7 @@ console.log(delId)
 if(error){
   console.log(error.message)
 }
-// fetchdata()
+fetchdata()
       deleteConfirmationModal.close()
 toast.success("Task Deleted Successfully")    }
   };
@@ -358,13 +364,17 @@ return newTodos
 
 const handleUserLogout=()=>{
   localStorage.clear()
+  setTimeout(() => {
+    fetchdata()
+    
+  }, 2000);
 }
 
 
 
 useEffect(()=>{
   fetchdata()
-})
+},[])
 
 
   return (
@@ -372,8 +382,8 @@ useEffect(()=>{
  
     {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       {/* Todo Task Form Starts */}
-      <div className="w-full bg-linear-to-r from-[#020344] to-[#28b8d5]
-       ">
+      <div className={`w-full ${!localStorage.getItem("user") &&("h-[20vh]")}  bg-linear-to-r from-[#020344] to-[#28b8d5]
+       `}>
         <div className="grid grid-cols-12 ">
           <div className="col-span-10 my-2">
             <h5 className="text-center font-semibold text-2xl text-white">
@@ -402,7 +412,10 @@ useEffect(()=>{
             }
              
           </div>
-          <div className="col-span-12 my-2">
+
+{localStorage.getItem('user')&&(
+
+ <div className="col-span-12 my-2">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -449,9 +462,17 @@ useEffect(()=>{
               </div>
             </form>
           </div>
+
+
+
+)}
+
+         
         </div>
 
-        <div className="grid grid-cols-12 gap-5 my-2">
+{localStorage.getItem('user')&&(
+
+      <div className="grid grid-cols-12 gap-5 my-2">
           <div className="col-span-3"></div>
           <div className="col-span-6">
             <form
@@ -487,6 +508,15 @@ useEffect(()=>{
           </div>
           <div className="col-span-3"></div>
         </div>
+
+
+
+)}
+
+  
+      
+      
+      
       </div>
       {/* Todo Task Form Ends */}
 
@@ -622,7 +652,8 @@ handleTask2Submit(c.name,i.toString())
                 <button type="submit" className="btn btn-light"  >Add Task</button>
                 </div>
                 </form> */}
-                      <button
+                     {localStorage.getItem('user')?
+                                          <button
                         className="block px-4 py-2  w-full bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 rounded-lg font-semibold text-white "
                         
                         data-bs-target="#taskmodel"
@@ -643,7 +674,18 @@ handleTask2Submit(c.name,i.toString())
                         id="openModal"
                       >
                         Add New Task
+                      </button>:
+                      
+                                            <button
+                        className="block px-4 py-2  w-full bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 rounded-lg font-semibold text-white "
+                        onClick={()=>router.push("/login")}
+                        
+                      >
+                        Add New Task
                       </button>
+                    }
+                     
+
                     </div>
                   </div>
 

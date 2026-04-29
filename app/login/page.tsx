@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 
 export default function login(){
 
-let [loginUser,setLoginUser]=useState<{userEmail:string,userPassword:string}>({userEmail:"we",userPassword:""})
+let [loginUser,setLoginUser]=useState<{userEmail:string,userPassword:string}>({userEmail:"",userPassword:""})
 let[err,setErr]=useState<string>("")
 
 let router=useRouter();
@@ -121,7 +121,7 @@ handleLoginSubmit()
 
 {
   err!=""?
-<p className="text-red-700">{err}</p>:
+<p className="text-red-700 text-center font-bold">{err}</p>:
 <p></p>
 }
 
