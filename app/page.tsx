@@ -94,13 +94,6 @@ export default function Home() {
   if(data?.length){
         setTodos((prev: any) => {
 
-// let newTodos=data.map((item)=>({
-//    id:item.id,
-//           task:item.task,
-//           period:item.period,
-//           isDone:item.isDone,
-
-// }))
 
 
       return [
@@ -212,22 +205,35 @@ console.log(error.message)
     });
   };
 
-  const handleTask2Submit = () => {
-    // setIsActiveId(id)
-    // setIsCollapse(false)
+  const handleTask2Submit =async() => {
+   
 
     if (task2?.newTask != "") {
-      setTodos((prev: any) => {
-        return [
-          ...prev,
-          {
-            task: task2?.newTask,
-            period: task2.category,
-            isDone: false,
-            id: Date.now(),
-          },
-        ];
-      });
+    
+      // setTodos((prev: any) => {
+      //   return [
+      //     ...prev,
+      //     {
+      //       task: task2?.newTask,
+      //       period: task2.category,
+      //       isDone: false,
+      //       id: Date.now(),
+      //     },
+      //   ];
+      // });
+
+
+    const { error } = await supabase
+  .from('myTask')
+  .insert({ task:task2.newTask,period:task2.category,isDone:false})
+  if(error){
+    // toast.error(error.message)
+console.log(error.message)
+  }  else{
+    toast.success("Task Added Successfully")
+    // fetchdata()
+
+  }
 
       setTask2((prev: any) => {
         return {
@@ -281,7 +287,7 @@ fetchdata()
     }
   };
 
-  const deletetask =async(delId: any) => {
+  const deletetask =async(delId:any) => {
     if (delId) {
       // setTodos((prevTodo) => prevTodo.filter((item) => item.id != delId));
 
@@ -290,9 +296,11 @@ fetchdata()
   .delete()
   .eq('id', delId)
 console.log(delId)
+
 if(error){
   console.log(error.message)
 }
+// fetchdata()
       deleteConfirmationModal.close()
 toast.success("Task Deleted Successfully")    }
   };
@@ -348,6 +356,12 @@ return newTodos
 } 
 
 
+const handleUserLogout=()=>{
+  localStorage.clear()
+}
+
+
+
 useEffect(()=>{
   fetchdata()
 })
@@ -361,11 +375,32 @@ useEffect(()=>{
       <div className="w-full bg-linear-to-r from-[#020344] to-[#28b8d5]
        ">
         <div className="grid grid-cols-12 ">
-          <div className="col-span-12 my-2">
+          <div className="col-span-10 my-2">
             <h5 className="text-center font-semibold text-2xl text-white">
          
               My Trello App
             </h5>
+          </div>
+          <div className="col-span-2 my-3">
+            {
+            !localStorage.getItem('user')?
+            <a href="/login"
+                    
+                    className=" px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+                  >
+                    Log In
+                  </a>:
+                  <a 
+                    
+                    className=" px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90"
+                    style={{cursor:"default"}}
+                    onClick={handleUserLogout}
+                  >
+                    Log Out
+                  </a>
+            
+            }
+             
           </div>
           <div className="col-span-12 my-2">
             <form
