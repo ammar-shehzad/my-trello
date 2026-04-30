@@ -181,7 +181,7 @@ id:i.id
 console.log(error.message)
   }  else{
     toast.success("Task Added Successfully")
-    fetchdata()
+    
 
   }
 
@@ -206,15 +206,15 @@ console.log(error.message)
 
       let randomColorComplete = "#" + randomCardColor;
 
-      setCards((prev: any) => {
-        return [
-          ...prev,
-          {
-            name: cardName?.name,
-            color: randomColorComplete,
-          },
-        ];
-      });
+      // setCards((prev: any) => {
+      //   return [
+      //     ...prev,
+      //     {
+      //       name: cardName?.name,
+      //       color: randomColorComplete,
+      //     },
+      //   ];
+      // });
 
       const { error } = await supabase
   .from('myCards')
@@ -398,16 +398,52 @@ return newTodos
 const handleUserLogout=()=>{
   localStorage.clear()
   setTimeout(() => {
-    fetchdata()
+    // fetchdata()
     
   }, 2000);
 }
 
+// =====================
+
+useEffect(() => {
+
+fetchdata()
+
+   const channel = supabase
+      .channel('realtime myTask')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'myTask' },
+        (payload) => {
+          console.log('Change received!', payload)
+          
+          // 3. Update state based on payload type
+          fetchdata(); // Simplest way: re-fetch data
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'myCards' },
+        (payload) => {
+          console.log('Change received for cards!', payload)
+          
+          
+          fetchdata();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+// ==============================
 
 
-useEffect(()=>{
-  fetchdata()
-},[])
+// useEffect(()=>{
+//   fetchdata()
+// },[])
 
 
   return (
