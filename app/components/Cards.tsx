@@ -141,7 +141,7 @@ let router=useRouter()
         <Droppable droppableId="All-Columns" direction="horizontal" type="CARD">
           {(provided) => (
             <div
-              className="grid grid-flow-col auto-cols-[100px] overflow-x-auto  gap-1 rounded-lg  px-4 py-1  "
+              className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[100px] md:auto-cols-[100px] overflow-x-auto  gap-1 rounded-lg  px-4 py-1  "
               style={{ overflowX: "auto" }}
               {...provided.droppableProps}
               ref={provided.innerRef}

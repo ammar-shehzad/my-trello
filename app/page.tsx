@@ -2,16 +2,12 @@
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { todo } from "node:test";
 import { supabase } from "@/utils/supabase/client";
-import { error } from "console";
-import { useRouter } from "next/navigation";
 import MainHeader from "./components/Header";
 import TodoCards from "./components/Cards";
 import NewTodoTaskDialoge from "./components/AddNewTaskDialoge";
 import EditTaskDialoge from "./components/EditTaskDialoge";
 import DeleteConfirmationDialoge from "./components/DeleteConfirmationDialoge";
-// import MainHeader from "./components/Header";
 
 export default function Home() {
   let [task, setTask] = useState<{ newTask: any; category: any }>({
@@ -35,7 +31,6 @@ export default function Home() {
 
   let [err2, setErr2] = useState<any>("");
 
-
   let [editTask, setEditTask] = useState<{
     task: string;
     period: string;
@@ -47,7 +42,6 @@ export default function Home() {
     taskId: "",
   });
 
-  let router = useRouter();
   let modal = document.getElementById("taskmodel") as HTMLDialogElement;
 
   let taskEditmodel = document.getElementById(
@@ -117,15 +111,7 @@ export default function Home() {
       setCards([{ name: "today", id: 0 }]);
     }
   };
-
- 
-
-  
-
- 
-
-
-
+// to fetch realtime data from database
   useEffect(() => {
     fetchdata();
 
@@ -157,12 +143,6 @@ export default function Home() {
     };
   }, []);
 
-  // ==============================
-
-  // useEffect(()=>{
-  //   fetchdata()
-  // },[])
-
   return (
     <>
       {/* Todo Task Form Starts */}
@@ -181,7 +161,6 @@ export default function Home() {
 
       {/* Todo New Cards Starts */}
       <div className="container mx-auto my-3">
-        {/* =======================I am Starting Changes For Card Drag================== */}
         <TodoCards
           cards={cards}
           setCards={setCards}
@@ -203,19 +182,33 @@ export default function Home() {
       {/* ==========================tailwind modal starts============== */}
       {/* NEW TASK STARTS */}
 
-   <NewTodoTaskDialoge modal={modal} err2={err2} setErr2={setErr2} task2={task2} setTask2={setTask2}/>
+      <NewTodoTaskDialoge
+        modal={modal}
+        err2={err2}
+        setErr2={setErr2}
+        task2={task2}
+        setTask2={setTask2}
+      />
 
       {/* NEW TASK ENDS */}
 
       {/* EDIT TASK STARTS */}
 
-    <EditTaskDialoge taskEditmodel={taskEditmodel} editTask={editTask} setEditTask={setEditTask}/>
+      <EditTaskDialoge
+        taskEditmodel={taskEditmodel}
+        editTask={editTask}
+        setEditTask={setEditTask}
+      />
 
       {/* EDIT TASK ENDS */}
 
       {/* ========================DELETE TASK CONFIRMATION MODAL STARTS=========  */}
 
-     <DeleteConfirmationDialoge deleteConfirmationModal={deleteConfirmationModal} deleteTask={deleteTask} setDeleteTask={setDeleteTask}/>
+      <DeleteConfirmationDialoge
+        deleteConfirmationModal={deleteConfirmationModal}
+        deleteTask={deleteTask}
+        setDeleteTask={setDeleteTask}
+      />
 
       {/* ========================DELETE TASK CONFIRMATION MODAL ENDS=========  */}
 

@@ -13,21 +13,16 @@ export default function SignUp() {
     userPassword: string;
   }>({ userName: "", userEmail: "", userPassword: "" });
 
+  const handleUserChange = (e: any) => {
+    let { name, value } = e.target;
 
-const handleUserChange=(e:any)=>{
-let {name,value}=e.target
-
-
-setUser((prev)=>{
-return{
-  ...prev,
-  [name]:value
-}
-})
-
-
-}
-
+    setUser((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
 
   const addNewUser = async () => {
     if (
@@ -50,25 +45,21 @@ return{
         return;
       }
 
-      const { error: insertError } = await supabase
-        .from("myUsers")
-        .insert({
-          userName: user.userName,
-          userEmail: user.userEmail,
-          userPassword: user.userPassword,
-        });
+      const { error: insertError } = await supabase.from("myUsers").insert({
+        userName: user.userName,
+        userEmail: user.userEmail,
+        userPassword: user.userPassword,
+      });
 
       if (insertError) {
         console.log(insertError.message);
-      }else{
-        toast.success("Sign Up SuccessFully")
+      } else {
+        toast.success("Sign Up SuccessFully");
         setUser({
-          userName:"",
-          userEmail:"",
-          userPassword:""
-
-        })
-
+          userName: "",
+          userEmail: "",
+          userPassword: "",
+        });
       }
     } else {
       toast.error("Please Fill All The Fields");
@@ -96,10 +87,10 @@ return{
               {/* <div className="col-span-4"></div> */}
               <div className="col-span-12">
                 <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-addNewUser()
-                }}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    addNewUser();
+                  }}
                 >
                   <div className="flex flex-col space-y-1 my-8">
                     {/* ===============================UserName============================ */}
