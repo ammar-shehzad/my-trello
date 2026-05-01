@@ -1,6 +1,7 @@
 import { supabase } from "@/utils/supabase/client";
 import { Dispatch, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface ITask {
   newTask: any;
@@ -25,6 +26,9 @@ interface MainHeaderProps {
   setCardName: Dispatch<SetStateAction<ICardName>>;
   err: any;
   setErr: Dispatch<SetStateAction<any>>;
+  Cardmodel:HTMLDialogElement;
+  task1Model:HTMLDialogElement;
+  fetchdata:() => void;
 }
 
 const MainHeader: React.FC<MainHeaderProps> = ({
@@ -36,11 +40,19 @@ const MainHeader: React.FC<MainHeaderProps> = ({
   setCardName,
   err,
   setErr,
+  Cardmodel,
+  task1Model,
+  fetchdata
 }) => {
+
+
+
+
+
   const handleUserLogout = () => {
     localStorage.clear();
     setTimeout(() => {
-      // fetchdata()
+fetchdata()
     }, 2000);
   };
 
@@ -111,15 +123,20 @@ const MainHeader: React.FC<MainHeaderProps> = ({
     }
   };
 
+
+
   return (
     <>
       <div
         className={`w-full ${!localStorage.getItem("user") && "h-[20vh]"}  bg-linear-to-r from-[#020344] to-[#28b8d5] overflow-hidden
        `}
       >
+
+
+
         <div className="grid grid-cols-12 ">
-          <div className="col-span-10 my-2">
-            <h5 className="text-center font-semibold text-2xl text-white">
+          <div className="col-span-10  my-2">
+            <h5 className="text-center font-semibold   text-2xl  text-white">
               My Trello App
             </h5>
           </div>
@@ -146,107 +163,96 @@ const MainHeader: React.FC<MainHeaderProps> = ({
             )}
           </div>
 
-          {localStorage.getItem("user") && (
-            <div className="col-span-12 my-2">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleTaskSubmit();
-                }}
-              >
-                <div className="form-group grid grid-cols-1 mx-3 lg:grid-cols-12 md:grid-cols-12 gap-5 lg:mx-50 md:mx-50">
-                  <div className="col-span-1 md:hidden lg:hidden" >
-<h3 className="text-center font-semibold text-xl text-white ml-20">Add New Task</h3>
-</div>
-                  <div className="col-span-5 lg:col-span-5 md:col-span-5">
-                    <input
-                      type="text"
-                      className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
-                      placeholder="Your Task Here"
-                      value={task?.newTask}
-                      name="newTask"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="col-span-5 lg:col-span-5 md:col-span-5">
-                    <select
-                      name="category"
-                      value={task?.category}
-                      id=""
-                      className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
-                      onChange={handleInputChange}
-                    >
-                      <option style={{ color: "black" }}>
-                        Select One Category
-                      </option>
-                      {cards.map((c, i) => {
-                        return (
-                          <>
-                            <option value={c.name} style={{ color: "black" }}>
-                              {c.name}
-                            </option>
-                          </>
-                        );
-                      })}
-                    </select>
-                  </div>
-                  <div className="col-span-2 lg:col-span-1 md:col-span-1 flex justify-center md:block lg:block" >
-                    <button
-                      type="submit"
-                      className="block px-4 py-2 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90 ml-20 lg:ml-0"
-                    >
-                      Save
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          )}
         </div>
 
-        {localStorage.getItem("user") && (
-          <div className="grid lg:grid-cols-12 md:grid-cols-12 gap-5 my-2">
-            <div className="md:col-span-3 lg:col-span-3 col-span-1"></div>
-            <div className="md:col-span-6 lg:col-span-6 col-span-1">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleCardSubmit();
-                }}
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-12 md:grid-cols-12 gap-5 my-2">
 
-<div className="col-span-1 md:hidden lg:hidden" >
-<h3 className="text-center font-semibold text-xl text-white">Add New Card</h3>
-</div>
+          {localStorage.getItem("user") && (
 
-                  <div className="col-span-1 md:col-span-10 lg:col-span-10">
-                    <input
-                      type="text"
-                      className="block w-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white bg-white/10 text-white placeholder-white/70 border border-white/20 rounded backdrop-blur-sm"
-                      placeholder="Your Task Here"
-                      value={cardName?.name}
-                      onChange={handleInputCardChange}
-                    />
-                  </div>
 
-                  <div className="col-span-1 text-center md:col-span-2 lg:col-span-2 ">
-                    <button
-                      type="submit"
-                className="block px-2 py-3 bg-white text-[#020344] border border-gray-300 rounded-lg font-semibold hover:bg-opacity-90 ml-20 lg:ml-0"
-                    >
-                      Add Card
-                    </button>
-                  </div>
-                </div>
-              </form>
-              <span>
-                <p className="text-danger">{err}</p>
-              </span>
-            </div>
-            <div className="col-span-3"></div>
+<div className="container lg:mx-auto md:mx-auto my-5 ">
+        <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 space-y-4">
+          <div className="col-span-1 lg:col-span-12 md:col-span-12 text-center space-y-3">
+  <h5 className="text-center font-semibold text-2xl text-white my-2">
+              My Trello App
+            </h5>          
+
+         
           </div>
-        )}
+
+<div className="col-span-1 lg:col-span-3 md:col-span-3"></div>
+<div className="col-span-1 px-1  lg:col-span-3 md:col-span-3">
+    <button
+              className=" w-full px-4 py-2  bg-linear-to-r from-cyan-400 to-blue-500 border border-gray-300 -lg font-semibold text-white rounded-lg  hover:bg-opacity-90  lg:ml-0"
+              onClick={() => {
+                Cardmodel.showModal();
+              }}
+            >
+              Add New Card
+            </button>
+</div>
+<div className="col-span-1 px-1 lg:col-span-3 md:col-span-3">
+     <button
+              className="w-full px-4 py-2  bg-linear-to-r from-cyan-400 to-blue-500 border border-gray-300 -lg font-semibold text-white rounded-lg  hover:bg-opacity-90 lg:ml-0"
+              onClick={() => {
+                task1Model.showModal();
+              }}
+            >
+              Add New Task
+            </button>
+</div>
+<div className="col-span-1 lg:col-span-3 md:col-span-3"></div>
+
+
+
+
+        </div>
+      </div>
+ )}
+
+
+{/* <div className="grid grid-cols-12">
+
+<div className="container lg:mx-auto md:mx-auto my-3 ">
+        <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12">
+          <div className="col-span-1 lg:col-span-12 md:col-span-12 text-center space-y-3">
+            <h3 className="font-mono font-bold text-3xl">Your Tasks</h3>
+          
+
+         
+          </div>
+
+<div className="col-span-1 lg:col-span-3 md:col-span-3"></div>
+<div className="col-span-1 px-1  lg:col-span-3 md:col-span-3">
+    <button
+              className=" w-full px-4 py-2  bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 -lg font-semibold text-white rounded-lg  hover:bg-opacity-90  lg:ml-0"
+              onClick={() => {
+                Cardmodel.showModal();
+              }}
+            >
+              Add New Card
+            </button>
+</div>
+<div className="col-span-1 px-1 lg:col-span-3 md:col-span-3">
+     <button
+              className="w-full px-4 py-2  bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 -lg font-semibold text-white rounded-lg  hover:bg-opacity-90 lg:ml-0"
+              onClick={() => {
+                task1Model.showModal();
+              }}
+            >
+              Add New Task
+            </button>
+</div>
+<div className="col-span-1 lg:col-span-3 md:col-span-3"></div>
+
+
+
+
+        </div>
+      </div>
+
+</div> */}
+
+       
       </div>
     </>
   );

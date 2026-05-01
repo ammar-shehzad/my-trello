@@ -104,7 +104,7 @@ export default function SignUp() {
                       value={user.userName}
                       type="text"
                       onChange={handleUserChange}
-                      className="block w-full px-4 py-2 my-3 text-sm 
+                      className="block w-full px-4 py-2 my-1 text-sm 
                     text-black placeholder:text-gray-700 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#020344]"
                     />
 
@@ -118,7 +118,7 @@ export default function SignUp() {
                       value={user.userEmail}
                       type="text"
                       onChange={handleUserChange}
-                      className="block w-full px-4 py-2 my-3 text-sm 
+                      className="block w-full px-4 py-2 my-1 text-sm 
                     text-black placeholder:text-gray-700 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#020344]"
                     />
                     {/* =============================password================= */}

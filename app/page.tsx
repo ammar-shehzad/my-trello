@@ -8,6 +8,8 @@ import TodoCards from "./components/Cards";
 import NewTodoTaskDialoge from "./components/AddNewTaskDialoge";
 import EditTaskDialoge from "./components/EditTaskDialoge";
 import DeleteConfirmationDialoge from "./components/DeleteConfirmationDialoge";
+import AddNewTask1Dialoge from "./components/AddNewTask1Dialoge";
+import AddNewCardsDialoge from "./components/AddNewCardsDialoge";
 
 export default function Home() {
   let [task, setTask] = useState<{ newTask: any; category: any }>({
@@ -64,6 +66,18 @@ export default function Home() {
     if (e.target == deleteConfirmationModal) deleteConfirmationModal.close();
   });
 
+  let Cardmodel = document.getElementById("Cardmodel") as HTMLDialogElement;
+
+  Cardmodel?.addEventListener("click", (e) => {
+    if (e.target == Cardmodel) Cardmodel.close();
+  });
+
+  let task1Model = document.getElementById("task1Model") as HTMLDialogElement;
+
+  task1Model?.addEventListener("click", (e) => {
+    if (e.target == task1Model) task1Model.close();
+  });
+
   // ===================for Fetching database===============
 
   const fetchdata = async () => {
@@ -111,7 +125,7 @@ export default function Home() {
       setCards([{ name: "today", id: 0 }]);
     }
   };
-// to fetch realtime data from database
+  // to fetch realtime data from database
   useEffect(() => {
     fetchdata();
 
@@ -155,11 +169,16 @@ export default function Home() {
         setCardName={setCardName}
         err={err}
         setErr={setErr}
+        task1Model={task1Model}
+        Cardmodel={Cardmodel}
+        fetchdata={fetchdata}
+
       />
 
       {/* Todo Task Form Ends */}
 
       {/* Todo New Cards Starts */}
+
       <div className="container mx-auto my-3">
         <TodoCards
           cards={cards}
@@ -211,6 +230,24 @@ export default function Home() {
       />
 
       {/* ========================DELETE TASK CONFIRMATION MODAL ENDS=========  */}
+
+      {/* ============================Add Cards Model==================== */}
+      <AddNewCardsDialoge
+        cardName={cardName}
+        setCardName={setCardName}
+        Cardmodel={Cardmodel}
+        err={err}
+        setErr={setErr}
+      />
+
+      {/* =========================================Add New Task 1 Model ================= */}
+      <AddNewTask1Dialoge
+        task1Model={task1Model}
+        task={task}
+        setTask={setTask}
+        cards={cards}
+        setCards={setCards}
+      />
 
       {/* ==========================tailwind modal Ends============== */}
 

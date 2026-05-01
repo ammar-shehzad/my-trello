@@ -6,6 +6,7 @@ import {
   Droppable,
   Draggable,
 } from "@hello-pangea/dnd";
+import { supabase } from "@/utils/supabase/client";
 
 interface ICards {
   name: string;
@@ -114,6 +115,27 @@ let router=useRouter()
         period: destination.droppableId,
       };
 
+// ======for updating card name Starts===========
+
+
+const updateCardName=async(id:any,newName:any)=>{
+
+const { error } = await supabase
+  .from('myTask')
+  .update({period:newName })
+  .eq('id', id)
+
+
+}
+
+updateCardName(Number(draggableId),destination.droppableId)
+
+
+
+
+// ======for updating card name Ends===========
+
+
       newTodos.splice(taskIndex, 1);
       const destcolumn = newTodos.filter(
         (t) => t.period == destination.droppableId,
@@ -157,10 +179,13 @@ let router=useRouter()
                         {...provided.draggableProps}
                       >
                         {/* ===this is card==== */}
-                        <div {...provided.dragHandleProps}>
-                          <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB border-b-2 border-blue-500 py-1">
+                        <div {...provided.dragHandleProps} className="border-b-2 border-blue-500  px-1 py-1">
+                          <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB  py-1">
                             {c.name}
                           </h4>
+                          
+
+
                         </div>
 
                         {/* ===================This Dropable is for task starts================== */}

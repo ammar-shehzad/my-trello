@@ -89,12 +89,12 @@ export default function login() {
                       value={loginUser.userEmail}
                       type="text"
                       onChange={handleLogInChange}
-                      className="block w-full px-4 py-2 my-3 text-sm 
+                      className="block w-full px-4 py-2 my-1 text-sm 
                     text-black placeholder:text-gray-700 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#020344]"
                     />
                     {/* =============================password================= */}
                     <label htmlFor="password" className="font-bold">
-                      Your Email
+                      Your Password
                     </label>
                     <input
                       placeholder="Enter Your Password"
