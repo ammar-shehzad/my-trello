@@ -13,6 +13,9 @@ export default function SignUp() {
     userPassword: string;
   }>({ userName: "", userEmail: "", userPassword: "" });
 
+const emailRegex =/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const nameRegex=/[a-zA-Z][a-zA-Z0-9-_]{4,24}/;
+
   const handleUserChange = (e: any) => {
     let { name, value } = e.target;
 
@@ -30,7 +33,18 @@ export default function SignUp() {
       user.userEmail != "" &&
       user.userPassword != ""
     ) {
-      const { data, error } = await supabase
+      if(!emailRegex.test(user.userEmail)){
+
+        toast.error("Please Enter a Valid Email")
+
+      }
+      else if(!nameRegex.test(user.userName)){
+        toast.error("Please Enter a Valid Name")
+
+      }
+      else{
+
+const { data, error } = await supabase
         .from("myUsers")
         .select()
         .eq("userEmail", user.userEmail);
@@ -49,6 +63,7 @@ export default function SignUp() {
         userName: user.userName,
         userEmail: user.userEmail,
         userPassword: user.userPassword,
+        userLoggedin:false
       });
 
       if (insertError) {
@@ -61,6 +76,10 @@ export default function SignUp() {
           userPassword: "",
         });
       }
+
+
+      }
+      
     } else {
       toast.error("Please Fill All The Fields");
     }

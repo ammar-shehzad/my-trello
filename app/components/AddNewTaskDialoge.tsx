@@ -58,7 +58,6 @@ const handleTask2Submit = async () => {
           newTask: "",
         };
       });
-      toast.success("Task Added Successfully");
 
       // setIsActiveId(null)
     } else {

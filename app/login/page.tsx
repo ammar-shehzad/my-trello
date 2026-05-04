@@ -14,6 +14,9 @@ export default function login() {
 
   let router = useRouter();
 
+const emailRegex =/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+
   const handleLogInChange = (e: any) => {
     let { name, value } = e.target;
 
@@ -27,7 +30,14 @@ export default function login() {
 
   const handleLoginSubmit = async () => {
     if (loginUser.userEmail != "" && loginUser.userPassword != "") {
-      const { data, error } = await supabase
+
+      if(!emailRegex.test(loginUser.userEmail)){
+
+
+toast.error("Please Enter a Valid Email")
+        
+      }else{
+         const { data, error } = await supabase
         .from("myUsers")
         .select()
         .eq("userEmail", loginUser.userEmail.trim())
@@ -45,8 +55,24 @@ export default function login() {
         toast.success("Logged In Successfully");
         console.log("This Is Login Id : " + data[0].id);
         localStorage.setItem("user", data[0].id);
-        router.push("/");
+        localStorage.setItem("userName",data[0].userName);
+        
+            const { error } = await supabase
+  .from('myUsers')
+  .update({ userLoggedin:true})
+  .eq('id',localStorage.getItem("user") )
+
+if(error){
+  toast.error(error.message)
+}else{
+  router.push("/");
+
+}
+
       }
+      }
+
+     
     } else {
       toast.error("Please Fill All the Fields");
     }

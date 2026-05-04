@@ -25,7 +25,7 @@ export default function RootLayout({
 
 </head>
 
-      <body className="min-h-full flex flex-col bg-white
+      <body className="min-h-full flex flex-col bg-linear-to-r from-[#50428A] to-[#974F83]
       ">
         <Toaster position="top-right"/>
         {children}

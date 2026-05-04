@@ -163,7 +163,7 @@ updateCardName(Number(draggableId),destination.droppableId)
         <Droppable droppableId="All-Columns" direction="horizontal" type="CARD">
           {(provided) => (
             <div
-              className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[100px] md:auto-cols-[100px] overflow-x-auto  gap-1 rounded-lg  px-4 py-1  "
+              className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[70px] md:auto-cols-[70px] overflow-x-auto  gap-1 lg:gap-5 md:gap-5 rounded-lg  px-4 py-1  "
               style={{ overflowX: "auto" }}
               {...provided.droppableProps}
               ref={provided.innerRef}
@@ -174,7 +174,7 @@ updateCardName(Number(draggableId),destination.droppableId)
                     {(provided) => (
                       <div
                         key={i}
-                        className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden"
+                        className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden rounded-2xl"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >
@@ -193,8 +193,8 @@ updateCardName(Number(draggableId),destination.droppableId)
                         <Droppable droppableId={c.name} type="TASK">
                           {(provided, snapshot) => (
                             <div
-                              className="rounded-lg shadow-md shadow-lg  overflow-hidden"
-                              style={{ backgroundColor: "#FFFFFF" }}
+                              className="rounded-lg shadow-md shadow-lg bg-white  overflow-hidden"
+                              // style={{ backgroundColor: "#FFFFFF" }}
                               ref={provided.innerRef}
                               {...provided.droppableProps}
                             >
@@ -220,7 +220,7 @@ updateCardName(Number(draggableId),destination.droppableId)
                                                 {...provided.draggableProps}
                                                 {...provided.dragHandleProps}
                                               >
-                                                <div className="col-span-9">
+                                                <div className="col-span-9 truncate">
                                                   {" "}
                                                   {t.task}
                                                 </div>

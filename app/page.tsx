@@ -10,6 +10,7 @@ import EditTaskDialoge from "./components/EditTaskDialoge";
 import DeleteConfirmationDialoge from "./components/DeleteConfirmationDialoge";
 import AddNewTask1Dialoge from "./components/AddNewTask1Dialoge";
 import AddNewCardsDialoge from "./components/AddNewCardsDialoge";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   let [task, setTask] = useState<{ newTask: any; category: any }>({
@@ -28,6 +29,8 @@ export default function Home() {
   let [cardName, setCardName] = useState<{ name: string }>({ name: "" });
   let [cards, setCards] = useState<{ name: string; id: any }[]>([
     { name: "today", id: 0 },
+    { name: "Last Week", id: 1 },
+    { name: "Later", id: 2 },
   ]);
   let [err, setErr] = useState<any>("");
 
@@ -78,11 +81,27 @@ export default function Home() {
     if (e.target == task1Model) task1Model.close();
   });
 
+  let [loading, setLoading] = useState<boolean>(true);
+
+  let router = useRouter();
+
   // ===================for Fetching database===============
 
   const fetchdata = async () => {
     if (localStorage.getItem("user")) {
-      const { data, error } = await supabase
+
+const { data:userData, error:userError } = await supabase.from('myUsers')
+.select("*")
+.eq("id", localStorage.getItem("user"));
+if(userError){
+  toast.error(userError.message)
+}else{
+if(userData?.length){
+  
+  console.log("This Is User : "+userData[0].userLoggedin)
+if(userData[0].userLoggedin===true){
+
+        const { data, error } = await supabase
         .from("myTask")
         .select("*")
         .eq("userId", localStorage.getItem("user"));
@@ -109,6 +128,8 @@ export default function Home() {
         setCards((prev: any) => {
           return [
             { name: "today", id: 0 },
+            { name: "Last Week", id: 1 },
+            { name: "Later", id: 2 },
             ...cardData.map((i) => ({
               name: i.cardName,
               id: i.id,
@@ -117,10 +138,25 @@ export default function Home() {
         });
       }
 
+      router.push("/");
+
+
+} else{
+  router.push("/login")
+        setLoading(false);
+
+} 
+ 
+}
+}
+
+// ============================dskfksdjfjkdf=========================
       // console.log(await supabase
       //   .from('employee')
       //   .select('*'))
     } else {
+      router.push("/login");
+      setLoading(false);
       setTodos([]);
       setCards([{ name: "today", id: 0 }]);
     }
@@ -150,6 +186,15 @@ export default function Home() {
           fetchdata();
         },
       )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "myUsers" },
+        (payload) => {
+          console.log("Change received for User LogOut!", payload);
+
+          fetchdata();
+        },
+      )
       .subscribe();
 
     return () => {
@@ -157,101 +202,104 @@ export default function Home() {
     };
   }, []);
 
-  return (
-    <>
-      {/* Todo Task Form Starts */}
-      <MainHeader
-        task={task}
-        setTask={setTask}
-        cards={cards}
-        setCards={setCards}
-        cardName={cardName}
-        setCardName={setCardName}
-        err={err}
-        setErr={setErr}
-        task1Model={task1Model}
-        Cardmodel={Cardmodel}
-        fetchdata={fetchdata}
-
-      />
-
-      {/* Todo Task Form Ends */}
-
-      {/* Todo New Cards Starts */}
-
-      <div className="container mx-auto my-3">
-        <TodoCards
+  if (loading) {
+    return (
+      <>
+        {/* Todo Task Form Starts */}
+        <MainHeader
+          task={task}
+          setTask={setTask}
           cards={cards}
           setCards={setCards}
-          todos={todos}
-          setTodos={setTodos}
-          editTask={editTask}
-          setEditTask={setEditTask}
-          deleteTask={deleteTask}
-          setDeleteTask={setDeleteTask}
+          cardName={cardName}
+          setCardName={setCardName}
+          err={err}
+          setErr={setErr}
+          task1Model={task1Model}
+          Cardmodel={Cardmodel}
+          fetchdata={fetchdata}
+        />
+
+        {/* Todo Task Form Ends */}
+
+        {/* Todo New Cards Starts */}
+
+        <div className="container mx-auto my-3">
+          <TodoCards
+            cards={cards}
+            setCards={setCards}
+            todos={todos}
+            setTodos={setTodos}
+            editTask={editTask}
+            setEditTask={setEditTask}
+            deleteTask={deleteTask}
+            setDeleteTask={setDeleteTask}
+            task2={task2}
+            setTask2={setTask2}
+            taskEditmodel={taskEditmodel}
+            deleteConfirmationModal={deleteConfirmationModal}
+            modal={modal}
+          />
+        </div>
+
+        {/* Todo New Cards Ends */}
+        {/* ==========================tailwind modal starts============== */}
+        {/* NEW TASK STARTS */}
+
+        <NewTodoTaskDialoge
+          modal={modal}
+          err2={err2}
+          setErr2={setErr2}
           task2={task2}
           setTask2={setTask2}
-          taskEditmodel={taskEditmodel}
-          deleteConfirmationModal={deleteConfirmationModal}
-          modal={modal}
         />
-      </div>
 
-      {/* Todo New Cards Ends */}
-      {/* ==========================tailwind modal starts============== */}
-      {/* NEW TASK STARTS */}
+        {/* NEW TASK ENDS */}
 
-      <NewTodoTaskDialoge
-        modal={modal}
-        err2={err2}
-        setErr2={setErr2}
-        task2={task2}
-        setTask2={setTask2}
-      />
+        {/* EDIT TASK STARTS */}
 
-      {/* NEW TASK ENDS */}
+        <EditTaskDialoge
+          taskEditmodel={taskEditmodel}
+          editTask={editTask}
+          setEditTask={setEditTask}
+        />
 
-      {/* EDIT TASK STARTS */}
+        {/* EDIT TASK ENDS */}
 
-      <EditTaskDialoge
-        taskEditmodel={taskEditmodel}
-        editTask={editTask}
-        setEditTask={setEditTask}
-      />
+        {/* ========================DELETE TASK CONFIRMATION MODAL STARTS=========  */}
 
-      {/* EDIT TASK ENDS */}
+        <DeleteConfirmationDialoge
+          deleteConfirmationModal={deleteConfirmationModal}
+          deleteTask={deleteTask}
+          setDeleteTask={setDeleteTask}
+        />
 
-      {/* ========================DELETE TASK CONFIRMATION MODAL STARTS=========  */}
+        {/* ========================DELETE TASK CONFIRMATION MODAL ENDS=========  */}
 
-      <DeleteConfirmationDialoge
-        deleteConfirmationModal={deleteConfirmationModal}
-        deleteTask={deleteTask}
-        setDeleteTask={setDeleteTask}
-      />
+        {/* ============================Add Cards Model==================== */}
+        <AddNewCardsDialoge
+          cardName={cardName}
+          setCardName={setCardName}
+          Cardmodel={Cardmodel}
+          err={err}
+          setErr={setErr}
+        />
 
-      {/* ========================DELETE TASK CONFIRMATION MODAL ENDS=========  */}
+        {/* =========================================Add New Task 1 Model ================= */}
+        <AddNewTask1Dialoge
+          task1Model={task1Model}
+          task={task}
+          setTask={setTask}
+          cards={cards}
+          setCards={setCards}
+        />
 
-      {/* ============================Add Cards Model==================== */}
-      <AddNewCardsDialoge
-        cardName={cardName}
-        setCardName={setCardName}
-        Cardmodel={Cardmodel}
-        err={err}
-        setErr={setErr}
-      />
+        {/* ==========================tailwind modal Ends============== */}
 
-      {/* =========================================Add New Task 1 Model ================= */}
-      <AddNewTask1Dialoge
-        task1Model={task1Model}
-        task={task}
-        setTask={setTask}
-        cards={cards}
-        setCards={setCards}
-      />
-
-      {/* ==========================tailwind modal Ends============== */}
-
-      {/*================= model box=============================== */}
-    </>
-  );
+        {/*================= model box=============================== */}
+      </>
+    );
+  } else {
+    return router.push("/login");
+  }
 }
