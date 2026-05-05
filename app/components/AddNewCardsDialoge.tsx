@@ -37,9 +37,15 @@ const AddNewCardsDialoge: React.FC<AddNewCardsDialogeProps> = ({Cardmodel,cardNa
 
       let randomColorComplete = "#" + randomCardColor;
 
+const {count,error:countError}=await supabase.from("myCards").select("*",{count:'exact',head:true})
+
+        let safeCount=count??0
+
+
       const { error } = await supabase.from("myCards").insert({
         cardName: cardName.name,
         userId: localStorage.getItem("user"),
+        position:(safeCount+3||3)+1000
       });
 
       if (error) {

@@ -11,6 +11,7 @@ interface ITask{
 interface ICards{
     name: string;
     id: any;
+    position:any
 }
 
 interface AddNewTask1DialogeProps{

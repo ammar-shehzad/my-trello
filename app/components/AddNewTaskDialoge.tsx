@@ -2,26 +2,27 @@ import { supabase } from "@/utils/supabase/client";
 import { Dispatch, SetStateAction } from "react";
 import toast from "react-hot-toast";
 
-
 interface ITask2 {
-  newTask: any; 
+  newTask: any;
   category: any;
 }
 
-
-
-interface NewTaskDialogeProps{
-  modal:HTMLDialogElement;
-    task2:ITask2;
-  setTask2:Dispatch<SetStateAction<ITask2>>;
-  err2:any;
-  setErr2:Dispatch<SetStateAction<any>>;
-
+interface NewTaskDialogeProps {
+  modal: HTMLDialogElement;
+  task2: ITask2;
+  setTask2: Dispatch<SetStateAction<ITask2>>;
+  err2: any;
+  setErr2: Dispatch<SetStateAction<any>>;
 }
 
-const NewTodoTaskDialoge:React.FC<NewTaskDialogeProps>=({modal,task2,setTask2,err2,setErr2})=>{
-
- const handleTask2Change = (e: any) => {
+const NewTodoTaskDialoge: React.FC<NewTaskDialogeProps> = ({
+  modal,
+  task2,
+  setTask2,
+  err2,
+  setErr2,
+}) => {
+  const handleTask2Change = (e: any) => {
     let { name, value } = e.target;
 
     setTask2((prev: any) => {
@@ -32,24 +33,27 @@ const NewTodoTaskDialoge:React.FC<NewTaskDialogeProps>=({modal,task2,setTask2,er
     });
   };
 
-
-const handleTask2Submit = async () => {
+  const handleTask2Submit = async () => {
     if (task2?.newTask != "") {
-    
-      const { error } = await supabase
+      const { count, error: countError } = await supabase
         .from("myTask")
-        .insert({
-          task: task2.newTask,
-          period: task2.category,
-          isDone: false,
-          userId: localStorage.getItem("user"),
-        });
+        .select("*", { count: "exact", head: true })
+        .eq("period", task2.category);
+
+
+      const { error } = await supabase.from("myTask").insert({
+        task: task2.newTask,
+        period: task2.category,
+        isDone: false,
+        userId: localStorage.getItem("user"),
+        taskPosition:(count ||0)+1000
+      });
       if (error) {
         // toast.error(error.message)
         console.log(error.message);
       } else {
         toast.success("Task Added Successfully");
-        modal.close()
+        modal.close();
         // fetchdata();
       }
 
@@ -63,15 +67,13 @@ const handleTask2Submit = async () => {
       // setIsActiveId(null)
     } else {
       setErr2("Enter Your Task");
-      toast.error("Fill The Field")
+      toast.error("Fill The Field");
     }
   };
 
-
-return(
-
-  <>
-     <dialog
+  return (
+    <>
+      <dialog
         id="taskmodel"
         className="w-full max-w-100 h-fit max-h-[90vh] overflow-y-auto rounded-lg p-6 m-auto"
       >
@@ -151,16 +153,8 @@ return(
           </div>
         </div>
       </dialog>
-  
-  </>
+    </>
+  );
+};
 
-)
-
-
-}
-
-
-
-export default NewTodoTaskDialoge
-
-
+export default NewTodoTaskDialoge;

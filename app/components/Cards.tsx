@@ -7,6 +7,7 @@ import { supabase } from "@/utils/supabase/client";
 interface ICards {
   name: string;
   id: any;
+  position:any
 }
 
 interface ITodos {
@@ -82,6 +83,14 @@ const TodoCards: React.FC<MainCardsProps> = ({
 
     if (type === "CARD") {
       let newCardsList = Array.from(cards);
+
+  // const sortedCards = [...cards].sort((a, b) => a.position - b.position);
+
+  const prevCard = newCardsList[destination.index - (destination.index > source.index ? 0 : 1)];
+  const nextCard = newCardsList[destination.index + (destination.index > source.index ? 1 : 0)];
+
+
+
       let [dragCard] = newCardsList.splice(source.index, 1);
       newCardsList.splice(destination.index, 0, dragCard);
       setCards(newCardsList);

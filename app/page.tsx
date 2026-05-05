@@ -11,7 +11,7 @@ import DeleteConfirmationDialoge from "./components/DeleteConfirmationDialoge";
 import AddNewTask1Dialoge from "./components/AddNewTask1Dialoge";
 import AddNewCardsDialoge from "./components/AddNewCardsDialoge";
 import { useRouter } from "next/navigation";
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 export default function Home() {
   let [task, setTask] = useState<{ newTask: any; category: any }>({
     newTask: "",
@@ -23,14 +23,20 @@ export default function Home() {
   });
 
   let [todos, setTodos] = useState<
-    { task: string; period: string; isDone: boolean; id: any;taskPosition:any }[]
+    {
+      task: string;
+      period: string;
+      isDone: boolean;
+      id: any;
+      taskPosition: any;
+    }[]
   >([]);
 
   let [cardName, setCardName] = useState<{ name: string }>({ name: "" });
-  let [cards, setCards] = useState<{ name: string; id: any }[]>([
-    { name: "today", id: 0 },
-    { name: "Last Week", id: 1 },
-    { name: "Later", id: 2 },
+  let [cards, setCards] = useState<{ name: any; id: any; position: any }[]>([
+    { name: "today", id: 0, position: 1001 },
+    { name: "Last Week", id: 1, position: 1001 },
+    { name: "Later", id: 2, position: 1001 },
   ]);
   let [err, setErr] = useState<any>("");
 
@@ -47,31 +53,26 @@ export default function Home() {
     taskId: "",
   });
 
-let modal=document.getElementById("taskmodel") as HTMLDialogElement;
-let taskEditmodel=document.getElementById(
+  let modal = document.getElementById("taskmodel") as HTMLDialogElement;
+  let taskEditmodel = document.getElementById(
     "taskEditmodel",
   ) as HTMLDialogElement;
- let deleteConfirmationModal=document.getElementById(
+  let deleteConfirmationModal = document.getElementById(
     "deleteConfirmationModal",
   ) as HTMLDialogElement;
 
-//   if (typeof window !== 'undefined') {
-//     modal= document.getElementById("taskmodel") as HTMLDialogElement;
-  
-// taskEditmodel=document.getElementById(
-//     "taskEditmodel",
-//   ) as HTMLDialogElement;
+  //   if (typeof window !== 'undefined') {
+  //     modal= document.getElementById("taskmodel") as HTMLDialogElement;
 
+  // taskEditmodel=document.getElementById(
+  //     "taskEditmodel",
+  //   ) as HTMLDialogElement;
 
-//  deleteConfirmationModal= document.getElementById(
-//     "deleteConfirmationModal",
-//   ) as HTMLDialogElement;
+  //  deleteConfirmationModal= document.getElementById(
+  //     "deleteConfirmationModal",
+  //   ) as HTMLDialogElement;
 
-
-//   }
-
-
-   
+  //   }
 
   modal?.addEventListener("click", (e) => {
     if (e.target == modal) modal.close();
@@ -80,8 +81,6 @@ let taskEditmodel=document.getElementById(
   taskEditmodel?.addEventListener("click", (e) => {
     if (e.target == taskEditmodel) taskEditmodel.close();
   });
-
-
 
   deleteConfirmationModal?.addEventListener("click", (e) => {
     if (e.target == deleteConfirmationModal) deleteConfirmationModal.close();
@@ -107,70 +106,66 @@ let taskEditmodel=document.getElementById(
 
   const fetchdata = async () => {
     if (localStorage.getItem("user")) {
-
-const { data:userData, error:userError } = await supabase.from('myUsers')
-.select("*")
-.eq("id", localStorage.getItem("user"));
-if(userError){
-  toast.error(userError.message)
-}else{
-if(userData?.length){
-  
-  console.log("This Is User : "+userData[0].userLoggedin)
-if(userData[0].userLoggedin===true){
-
-        const { data, error } = await supabase
-        .from("myTask")
+      const { data: userData, error: userError } = await supabase
+        .from("myUsers")
         .select("*")
-        .eq("userId", localStorage.getItem("user"))
-          .order('taskPosition', { ascending:true });;
+        .eq("id", localStorage.getItem("user"));
+      if (userError) {
+        toast.error(userError.message);
+      } else {
+        if (userData?.length) {
+          console.log("This Is User : " + userData[0].userLoggedin);
+          if (userData[0].userLoggedin === true) {
+            const { data, error } = await supabase
+              .from("myTask")
+              .select("*")
+              .eq("userId", localStorage.getItem("user"))
+              .order("taskPosition", { ascending: true });
 
-      if (data?.length) {
-        setTodos((prev: any) => {
-          return [
-            ...data.map((item) => ({
-              id: item.id,
-              task: item.task,
-              period: item.period,
-              isDone: item.isDone,
-              taskPosition:item.taskPosition
-            })),
-          ];
-        });
+            if (data?.length) {
+              setTodos((prev: any) => {
+                return [
+                  ...data.map((item) => ({
+                    id: item.id,
+                    task: item.task,
+                    period: item.period,
+                    isDone: item.isDone,
+                    taskPosition: item.taskPosition,
+                  })),
+                ];
+              });
+            }
+
+            const { data: cardData, error: cardError } = await supabase
+              .from("myCards")
+              .select("*")
+              .eq("userId", localStorage.getItem("user"))
+              .order("position", { ascending: true });
+
+            if (cardData?.length) {
+              setCards((prev: any) => {
+                return [
+                  { name: "today", id: 0, position: 1001 },
+                  { name: "Last Week", id: 1, position: 1001 },
+                  { name: "Later", id: 2, position: 1001 },
+                  ...cardData.map((i) => ({
+                    name: i.cardName,
+                    id: i.id,
+                    position: i.position,
+                  })),
+                ];
+              });
+            }
+
+            router.push("/");
+          } else {
+            router.push("/login");
+            setLoading(false);
+          }
+        }
       }
 
-      const { data: cardData, error: cardError } = await supabase
-        .from("myCards")
-        .select("*")
-        .eq("userId", localStorage.getItem("user"));
-
-      if (cardData?.length) {
-        setCards((prev: any) => {
-          return [
-            { name: "today", id: 0 },
-            { name: "Last Week", id: 1 },
-            { name: "Later", id: 2 },
-            ...cardData.map((i) => ({
-              name: i.cardName,
-              id: i.id,
-            })),
-          ];
-        });
-      }
-
-      router.push("/");
-
-
-} else{
-  router.push("/login")
-        setLoading(false);
-
-} 
- 
-}
-}
-
-// ============================dskfksdjfjkdf=========================
+      // ============================dskfksdjfjkdf=========================
       // console.log(await supabase
       //   .from('employee')
       //   .select('*'))
@@ -178,7 +173,7 @@ if(userData[0].userLoggedin===true){
       router.push("/login");
       setLoading(false);
       setTodos([]);
-      setCards([{ name: "today", id: 0 }]);
+      setCards([{ name: "today", id: 0, position: 1000 }]);
     }
   };
   // to fetch realtime data from database
