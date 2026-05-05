@@ -23,7 +23,7 @@ export default function Home() {
   });
 
   let [todos, setTodos] = useState<
-    { task: string; period: string; isDone: boolean; id: any }[]
+    { task: string; period: string; isDone: boolean; id: any;taskPosition:any }[]
   >([]);
 
   let [cardName, setCardName] = useState<{ name: string }>({ name: "" });
@@ -47,7 +47,7 @@ export default function Home() {
     taskId: "",
   });
 
-let modal=document.getElementById("taskmodel") as HTMLDialogElement;;
+let modal=document.getElementById("taskmodel") as HTMLDialogElement;
 let taskEditmodel=document.getElementById(
     "taskEditmodel",
   ) as HTMLDialogElement;
@@ -122,7 +122,8 @@ if(userData[0].userLoggedin===true){
         const { data, error } = await supabase
         .from("myTask")
         .select("*")
-        .eq("userId", localStorage.getItem("user"));
+        .eq("userId", localStorage.getItem("user"))
+          .order('taskPosition', { ascending:true });;
 
       if (data?.length) {
         setTodos((prev: any) => {
@@ -132,6 +133,7 @@ if(userData[0].userLoggedin===true){
               task: item.task,
               period: item.period,
               isDone: item.isDone,
+              taskPosition:item.taskPosition
             })),
           ];
         });

@@ -44,6 +44,10 @@ const AddNewTask1Dialoge:React.FC<AddNewTask1DialogeProps>=({task1Model,task,set
 
   const handleTaskSubmit = async () => {
     if (task.newTask != "" && task.category!="") {
+
+const {count,error:countError}=await supabase.from("myTask").select("*",{count:'exact',head:true}).eq('period',task.category)
+
+
       const { error } = await supabase
         .from("myTask")
         .insert({
@@ -51,6 +55,7 @@ const AddNewTask1Dialoge:React.FC<AddNewTask1DialogeProps>=({task1Model,task,set
           period: task.category,
           isDone: false,
           userId: localStorage.getItem("user"),
+          taskPosition:(count || 0)+1000
         });
       if (error) {
         // toast.error(error.message)
@@ -138,7 +143,7 @@ return(
                       {cards.map((c, i) => {
                         return (
                         
-                            <option key={c.id} value={c.name} style={{ color: "black" }}>
+                            <option key={c.id} value={c.id} style={{ color: "black" }}>
                               {c.name}
                             </option>
                         

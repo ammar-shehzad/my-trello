@@ -1,11 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/navigation";
 
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-} from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { supabase } from "@/utils/supabase/client";
 
 interface ICards {
@@ -18,6 +14,7 @@ interface ITodos {
   period: string;
   isDone: boolean;
   id: any;
+  taskPosition: any;
 }
 
 interface IEditTask {
@@ -26,18 +23,15 @@ interface IEditTask {
   id: any;
 }
 
-
 interface IDeleteTask {
   task: string;
   taskId: any;
 }
 
-
 interface ITask2 {
-  newTask: any; 
+  newTask: any;
   category: any;
 }
-
 
 // interface ITaskEditModelId {
 //  taskEditmodel:HTMLDialogElement
@@ -48,16 +42,15 @@ interface MainCardsProps {
   setCards: Dispatch<SetStateAction<ICards[]>>;
   todos: ITodos[];
   setTodos: Dispatch<SetStateAction<ITodos[]>>;
-  editTask:IEditTask;
-  setEditTask:Dispatch<SetStateAction<IEditTask>>;
-  deleteTask:IDeleteTask;
-  setDeleteTask:Dispatch<SetStateAction<IDeleteTask>>;
-  task2:ITask2;
-  setTask2:Dispatch<SetStateAction<ITask2>>;
-  taskEditmodel:HTMLDialogElement;
-  modal:HTMLDialogElement;
-  deleteConfirmationModal:HTMLDialogElement;
-  
+  editTask: IEditTask;
+  setEditTask: Dispatch<SetStateAction<IEditTask>>;
+  deleteTask: IDeleteTask;
+  setDeleteTask: Dispatch<SetStateAction<IDeleteTask>>;
+  task2: ITask2;
+  setTask2: Dispatch<SetStateAction<ITask2>>;
+  taskEditmodel: HTMLDialogElement;
+  modal: HTMLDialogElement;
+  deleteConfirmationModal: HTMLDialogElement;
 }
 
 const TodoCards: React.FC<MainCardsProps> = ({
@@ -73,14 +66,9 @@ const TodoCards: React.FC<MainCardsProps> = ({
   setTask2,
   taskEditmodel,
   modal,
-  deleteConfirmationModal
-  
-  
-
+  deleteConfirmationModal,
 }) => {
- 
- 
-let router=useRouter()
+  let router = useRouter();
 
   const onDragEnd = (result: any) => {
     const { source, destination, draggableId, type } = result;
@@ -97,41 +85,39 @@ let router=useRouter()
       let [dragCard] = newCardsList.splice(source.index, 1);
       newCardsList.splice(destination.index, 0, dragCard);
       setCards(newCardsList);
-// =========================database changes=======
+      // =========================database changes=======
 
-//  try {
-//       // Option A: Update only the moved card (requires re-indexing logic)
-//       // Option B: Update all cards based on new index (Easier, shown below)
-      
-//       const updates = newCardsList.map((card, index) => ({
-//         id: card.id, // Assuming your card has a unique ID
-//         cardName: card.name,
-//         position: index, // Set new index
-//         userId:localStorage.getItem("user")
-//       }));
+      //  try {
+      //       // Option A: Update only the moved card (requires re-indexing logic)
+      //       // Option B: Update all cards based on new index (Easier, shown below)
 
-//       const updateCardIndex=async()=>{
-//       const { error } = await supabase
-//         .from('cards') // Your table name
-//         .upsert(updates);
+      //       const updates = newCardsList.map((card, index) => ({
+      //         id: card.id, // Assuming your card has a unique ID
+      //         cardName: card.name,
+      //         position: index, // Set new index
+      //         userId:localStorage.getItem("user")
+      //       }));
 
-//       if (error) throw error;
-      
-//       console.log("Card order updated in Supabase");
-//       }
+      //       const updateCardIndex=async()=>{
+      //       const { error } = await supabase
+      //         .from('cards') // Your table name
+      //         .upsert(updates);
 
-//       updateCardIndex()
-//       // Assuming you have a Supabase client named 'supabase'
+      //       if (error) throw error;
 
-//     } catch (error) {
-//       console.error("Error updating card order:", error);
-//       // Revert local state if database update fails
-//       // setCards(cards); 
-//     }
+      //       console.log("Card order updated in Supabase");
+      //       }
 
+      //       updateCardIndex()
+      //       // Assuming you have a Supabase client named 'supabase'
 
-// =========================
+      //     } catch (error) {
+      //       console.error("Error updating card order:", error);
+      //       // Revert local state if database update fails
+      //       // setCards(cards);
+      //     }
 
+      // =========================
     }
 
     let moveTask = todos.find((t) => t.id == draggableId);
@@ -145,31 +131,47 @@ let router=useRouter()
       const taskIndex = newTodos.findIndex((t) => t.id == draggableId);
       if (taskIndex === -1) return prevtodos;
 
+      const destTasks = newTodos
+        .filter((t) => String(t.period) === String(destination.droppableId))
+        .sort((a, b) => a.taskPosition - b.taskPosition);
+
+      let newPos: number;
+      const prevTask = destTasks[destination.index - 1];
+      const nextTask = destTasks[destination.index];
+
+      if (!prevTask && !nextTask) {
+        newPos = 1000;
+      } else if (!prevTask) {
+        newPos = nextTask.taskPosition / 2;
+      } else if (!nextTask) {
+        newPos = prevTask.taskPosition + 1024;
+      } else {
+        newPos = (prevTask.taskPosition + nextTask.taskPosition) / 2;
+      }
+
+      // console.log(newTodos[taskIndex].taskPosition)
       const updateTask = {
         ...newTodos[taskIndex],
         period: destination.droppableId,
+        taskPosition: newPos,
       };
 
-// ======for updating card name Starts===========
+      // ======for updating card name Starts===========
 
+      const taskDroppableIndex = newTodos.findIndex(
+        (t) => t.id == destination.droppableId,
+      );
 
-const updateCardName=async(id:any,newName:any)=>{
+      const updateCardName = async (id: any, newName: any) => {
+        const { error } = await supabase
+          .from("myTask")
+          .update({ period: newName, taskPosition: newPos })
+          .eq("id", id);
+      };
 
-const { error } = await supabase
-  .from('myTask')
-  .update({period:newName })
-  .eq('id', id)
+      updateCardName(Number(draggableId), destination.droppableId);
 
-
-}
-
-updateCardName(Number(draggableId),destination.droppableId)
-
-
-
-
-// ======for updating card name Ends===========
-
+      // ======for updating card name Ends===========
 
       newTodos.splice(taskIndex, 1);
       const destcolumn = newTodos.filter(
@@ -187,184 +189,174 @@ updateCardName(Number(draggableId),destination.droppableId)
     });
   };
 
-
-
-
   return (
-    
-      <DragDropContext onDragEnd={onDragEnd}>
-        {/* This Droppable is for  the cards start and inside it task droppable logic exist */}
+    <DragDropContext onDragEnd={onDragEnd}>
+      {/* This Droppable is for  the cards start and inside it task droppable logic exist */}
 
-        <Droppable droppableId="All-Columns" direction="horizontal" type="CARD">
-          {(provided) => (
-            <div
-              className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[70px] md:auto-cols-[70px] overflow-x-auto  gap-1 lg:gap-5 md:gap-5 rounded-lg  px-4 py-1  "
-              style={{ overflowX: "auto" }}
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {cards.map((c, i) => {
-                return (
-                  <Draggable key={c.id} draggableId={c.name} index={i}>
-                    {(provided) => (
-                      <div 
-                        
-                        className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden rounded-2xl"
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
+      <Droppable droppableId="All-Columns" direction="horizontal" type="CARD">
+        {(provided) => (
+          <div
+            className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[70px] md:auto-cols-[70px] overflow-x-auto  gap-1 lg:gap-5 md:gap-5 rounded-lg  px-4 py-1  "
+            style={{ overflowX: "auto" }}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            {cards.map((c, i) => {
+              return (
+                <Draggable key={c.id} draggableId={c.name} index={i}>
+                  {(provided) => (
+                    <div
+                      className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden rounded-2xl"
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                    >
+                      {/* ===this is card==== */}
+                      <div
+                        {...provided.dragHandleProps}
+                        className="border-b-2 border-blue-500  px-1 py-1"
                       >
-                        {/* ===this is card==== */}
-                        <div {...provided.dragHandleProps} className="border-b-2 border-blue-500  px-1 py-1">
-                          <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB  py-1">
-                            {c.name}
-                          </h4>
-                          
-
-
-                        </div>
-
-                        {/* ===================This Dropable is for task starts================== */}
-
-                        <Droppable key={c.id}  droppableId={c.name} type="TASK">
-                          {(provided, snapshot) => (
-                            <div
-                            
-                              className="rounded-lg shadow-md  bg-white  overflow-hidden"
-                              // style={{ backgroundColor: "#FFFFFF" }}
-                              ref={provided.innerRef}
-                              {...provided.droppableProps}
-                            >
-                              <div
-                                style={{ height: "50vh", overflowY: "auto" }}
-                              >
-                                <ul className="list-none space-y-2 mt-6 mr-7">
-                                  {todos
-                                    .filter((todos) => todos.period == c.name)
-                                    .map((t, i) => {
-                                      return (
-                                        
-                                          <Draggable
-                                            key={t.id}
-                                            draggableId={String(t.id)}
-                                            index={i}
-                                          >
-                                            {(provided) => (
-                                              <li
-                                                key={t.id}
-                                                className="grid grid-cols-12 gap-2  ml-5 rounded py-2 px-3 bg-white shadow-lg shadow-black/70"
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                              >
-                                                <div className="col-span-9 truncate">
-                                                  {" "}
-                                                  {t.task}
-                                                </div>
-
-                                                <div className="col-span-3 flex flex-row">
-                                                  <span
-                                                    style={{
-                                                      cursor: "default",
-                                                    }}
-                                                    className="mx-1"
-                                                    onClick={() => {
-                                                      taskEditmodel.showModal();
-                                                      setEditTask({
-                                                        task: t.task,
-                                                        period: t.period,
-                                                        id: t.id,
-                                                      });
-                                                    }}
-                                                    data-bs-target="#editmodel"
-                                                    data-bs-toggle="modal"
-                                                  >
-                                                    <i
-                                                      className="fa-solid fa-pen-to-square "
-                                                      style={{
-                                                        color:
-                                                          "rgb(15, 125, 6)",
-                                                      }}
-                                                    ></i>
-                                                  </span>
-                                                  <span
-                                                    style={{
-                                                      cursor: "default",
-                                                    }}
-                                                    onClick={() => {
-                                                      setDeleteTask({
-                                                        task: t.task,
-                                                        taskId: t.id,
-                                                      });
-                                                      deleteConfirmationModal.showModal();
-                                                      // deletetask(t.id);
-                                                    }}
-                                                  >
-                                                    <i
-                                                      className="fa-solid fa-delete-left"
-                                                      style={{
-                                                        color: "rgb(255,0,0)",
-                                                      }}
-                                                    ></i>
-                                                  </span>
-                                                </div>
-                                              </li>
-                                            )}
-                                          </Draggable>
-                                        
-                                      );
-                                    })}
-                                </ul>
-                                {provided.placeholder}
-                              </div>
-                              <div className="card-footer  d-flex">
-              
-                                {localStorage.getItem("user") ? (
-                                  <button
-                                    className="block px-4 py-2  w-full bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 rounded-lg font-semibold text-white "
-                                    data-bs-target="#taskmodel"
-                                    data-bs-toggle="modal"
-                                    onClick={() => {
-                                      setTask2((prev) => {
-                                        modal = document.getElementById(
-                                          "taskmodel",
-                                        ) as HTMLDialogElement;
-
-                                        modal.showModal();
-                                        return {
-                                          ...prev,
-                                          category: c.name,
-                                        };
-                                      });
-                                    }}
-                                    id="openModal"
-                                  >
-                                    Add New Task
-                                  </button>
-                                ) : (
-                                  <button
-                                    className="block px-4 py-2  w-full bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 rounded-lg font-semibold text-white "
-                                    onClick={() => router.push("/login")}
-                                  >
-                                    Add New Task
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </Droppable>
-                        {/* ===================This Dropable is for task Ends================== */}
+                        <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB  py-1">
+                          {c.name}
+                        </h4>
                       </div>
-                    )}
-                  </Draggable>
-                );
-              })}
-            </div>
-          )}
-        </Droppable>
 
-        {/* This Droppable is for  the cards Ends and inside it task droppable logic exist */}
-      </DragDropContext>
-    
+                      {/* ===================This Dropable is for task starts================== */}
+
+                      <Droppable
+                        key={c.id}
+                        droppableId={String(c.id)}
+                        type="TASK"
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            className="rounded-lg shadow-md  bg-white  overflow-hidden"
+                            // style={{ backgroundColor: "#FFFFFF" }}
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                          >
+                            <div style={{ height: "50vh", overflowY: "auto" }}>
+                              <ul className="list-none space-y-2 mt-6 mr-7">
+                                {todos
+                                  .filter((todos) => todos.period == c.id)
+                                  .map((t, i) => {
+                                    return (
+                                      <Draggable
+                                        key={t.id}
+                                        draggableId={String(t.id)}
+                                        index={i}
+                                      >
+                                        {(provided) => (
+                                          <li
+                                            key={t.id}
+                                            className="grid grid-cols-12 gap-2  ml-5 rounded py-2 px-3 bg-white shadow-lg shadow-black/70"
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                          >
+                                            <div className="col-span-9 truncate">
+                                              {t.task}
+                                            </div>
+
+                                            <div className="col-span-3 flex flex-row">
+                                              <span
+                                                style={{
+                                                  cursor: "default",
+                                                }}
+                                                className="mx-1"
+                                                onClick={() => {
+                                                  taskEditmodel.showModal();
+                                                  setEditTask({
+                                                    task: t.task,
+                                                    period: t.period,
+                                                    id: t.id,
+                                                  });
+                                                }}
+                                                data-bs-target="#editmodel"
+                                                data-bs-toggle="modal"
+                                              >
+                                                <i
+                                                  className="fa-solid fa-pen-to-square "
+                                                  style={{
+                                                    color: "rgb(15, 125, 6)",
+                                                  }}
+                                                ></i>
+                                              </span>
+                                              <span
+                                                style={{
+                                                  cursor: "default",
+                                                }}
+                                                onClick={() => {
+                                                  setDeleteTask({
+                                                    task: t.task,
+                                                    taskId: t.id,
+                                                  });
+                                                  deleteConfirmationModal.showModal();
+                                                  // deletetask(t.id);
+                                                }}
+                                              >
+                                                <i
+                                                  className="fa-solid fa-delete-left"
+                                                  style={{
+                                                    color: "rgb(255,0,0)",
+                                                  }}
+                                                ></i>
+                                              </span>
+                                            </div>
+                                          </li>
+                                        )}
+                                      </Draggable>
+                                    );
+                                  })}
+                              </ul>
+                              {provided.placeholder}
+                            </div>
+                            <div className="card-footer  d-flex">
+                              {localStorage.getItem("user") ? (
+                                <button
+                                  className="block px-4 py-2  w-full bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 rounded-lg font-semibold text-white "
+                                  data-bs-target="#taskmodel"
+                                  data-bs-toggle="modal"
+                                  onClick={() => {
+                                    setTask2((prev) => {
+                                      modal = document.getElementById(
+                                        "taskmodel",
+                                      ) as HTMLDialogElement;
+
+                                      modal.showModal();
+                                      return {
+                                        ...prev,
+                                        category: c.id,
+                                      };
+                                    });
+                                  }}
+                                  id="openModal"
+                                >
+                                  Add New Task
+                                </button>
+                              ) : (
+                                <button
+                                  className="block px-4 py-2  w-full bg-linear-to-r from-[#020344] to-[#28b8d5] border border-gray-300 rounded-lg font-semibold text-white "
+                                  onClick={() => router.push("/login")}
+                                >
+                                  Add New Task
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </Droppable>
+                      {/* ===================This Dropable is for task Ends================== */}
+                    </div>
+                  )}
+                </Draggable>
+              );
+            })}
+          </div>
+        )}
+      </Droppable>
+
+      {/* This Droppable is for  the cards Ends and inside it task droppable logic exist */}
+    </DragDropContext>
   );
 };
 
