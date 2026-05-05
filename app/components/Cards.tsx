@@ -225,11 +225,11 @@ updateCardName(Number(draggableId),destination.droppableId)
 
                         {/* ===================This Dropable is for task starts================== */}
 
-                        <Droppable  droppableId={c.name} type="TASK">
+                        <Droppable key={c.id}  droppableId={c.name} type="TASK">
                           {(provided, snapshot) => (
                             <div
                             
-                              className="rounded-lg shadow-md shadow-lg bg-white  overflow-hidden"
+                              className="rounded-lg shadow-md  bg-white  overflow-hidden"
                               // style={{ backgroundColor: "#FFFFFF" }}
                               ref={provided.innerRef}
                               {...provided.droppableProps}
@@ -242,7 +242,7 @@ updateCardName(Number(draggableId),destination.droppableId)
                                     .filter((todos) => todos.period == c.name)
                                     .map((t, i) => {
                                       return (
-                                        <>
+                                        
                                           <Draggable
                                             key={t.id}
                                             draggableId={String(t.id)}
@@ -310,7 +310,7 @@ updateCardName(Number(draggableId),destination.droppableId)
                                               </li>
                                             )}
                                           </Draggable>
-                                        </>
+                                        
                                       );
                                     })}
                                 </ul>

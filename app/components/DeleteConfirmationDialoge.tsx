@@ -93,7 +93,7 @@ return(
                 Confirm Delete
                 <i
                   className="fa-solid fa-trash fa-beat mx-1"
-                  style={{ color: "rgb(255, 255, 255);" }}
+                  style={{ color: "rgb(255, 255, 255)" }}
                 ></i>
               </button>
             </div>

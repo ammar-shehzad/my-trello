@@ -11,7 +11,7 @@ import DeleteConfirmationDialoge from "./components/DeleteConfirmationDialoge";
 import AddNewTask1Dialoge from "./components/AddNewTask1Dialoge";
 import AddNewCardsDialoge from "./components/AddNewCardsDialoge";
 import { useRouter } from "next/navigation";
-
+import React, { useRef } from 'react';
 export default function Home() {
   let [task, setTask] = useState<{ newTask: any; category: any }>({
     newTask: "",
@@ -47,11 +47,31 @@ export default function Home() {
     taskId: "",
   });
 
-  let modal = document.getElementById("taskmodel") as HTMLDialogElement;
-
-  let taskEditmodel = document.getElementById(
+let modal=document.getElementById("taskmodel") as HTMLDialogElement;;
+let taskEditmodel=document.getElementById(
     "taskEditmodel",
   ) as HTMLDialogElement;
+ let deleteConfirmationModal=document.getElementById(
+    "deleteConfirmationModal",
+  ) as HTMLDialogElement;
+
+//   if (typeof window !== 'undefined') {
+//     modal= document.getElementById("taskmodel") as HTMLDialogElement;
+  
+// taskEditmodel=document.getElementById(
+//     "taskEditmodel",
+//   ) as HTMLDialogElement;
+
+
+//  deleteConfirmationModal= document.getElementById(
+//     "deleteConfirmationModal",
+//   ) as HTMLDialogElement;
+
+
+//   }
+
+
+   
 
   modal?.addEventListener("click", (e) => {
     if (e.target == modal) modal.close();
@@ -61,9 +81,7 @@ export default function Home() {
     if (e.target == taskEditmodel) taskEditmodel.close();
   });
 
-  let deleteConfirmationModal = document.getElementById(
-    "deleteConfirmationModal",
-  ) as HTMLDialogElement;
+
 
   deleteConfirmationModal?.addEventListener("click", (e) => {
     if (e.target == deleteConfirmationModal) deleteConfirmationModal.close();
