@@ -167,7 +167,7 @@ const avatarStyle = {
             </h5>
           </div>
           <div className="col-span-7">
-<div className="flex justify-center gap-2 ">
+{/* <div className="flex justify-center gap-2 ">
 
 <form className="max-w-md w-full ">   
     <label htmlFor="search" className="block mb-2.5 text-sm font-medium text-heading sr-only ">Search</label>
@@ -182,7 +182,7 @@ const avatarStyle = {
    <button type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-linear-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-base text-sm px-7 py-2 text-center leading-5 rounded-lg">Create</button>
 
 
-</div>
+</div> */}
 
           </div>
           <div className="col-span-3 my-3 flex justify-end">

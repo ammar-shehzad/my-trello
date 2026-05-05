@@ -97,6 +97,41 @@ let router=useRouter()
       let [dragCard] = newCardsList.splice(source.index, 1);
       newCardsList.splice(destination.index, 0, dragCard);
       setCards(newCardsList);
+// =========================database changes=======
+
+//  try {
+//       // Option A: Update only the moved card (requires re-indexing logic)
+//       // Option B: Update all cards based on new index (Easier, shown below)
+      
+//       const updates = newCardsList.map((card, index) => ({
+//         id: card.id, // Assuming your card has a unique ID
+//         cardName: card.name,
+//         position: index, // Set new index
+//         userId:localStorage.getItem("user")
+//       }));
+
+//       const updateCardIndex=async()=>{
+//       const { error } = await supabase
+//         .from('cards') // Your table name
+//         .upsert(updates);
+
+//       if (error) throw error;
+      
+//       console.log("Card order updated in Supabase");
+//       }
+
+//       updateCardIndex()
+//       // Assuming you have a Supabase client named 'supabase'
+
+//     } catch (error) {
+//       console.error("Error updating card order:", error);
+//       // Revert local state if database update fails
+//       // setCards(cards); 
+//     }
+
+
+// =========================
+
     }
 
     let moveTask = todos.find((t) => t.id == draggableId);
@@ -156,7 +191,7 @@ updateCardName(Number(draggableId),destination.droppableId)
 
 
   return (
-    <>
+    
       <DragDropContext onDragEnd={onDragEnd}>
         {/* This Droppable is for  the cards start and inside it task droppable logic exist */}
 
@@ -170,10 +205,10 @@ updateCardName(Number(draggableId),destination.droppableId)
             >
               {cards.map((c, i) => {
                 return (
-                  <Draggable key={c.name} draggableId={c.name} index={i}>
+                  <Draggable key={c.id} draggableId={c.name} index={i}>
                     {(provided) => (
-                      <div
-                        key={i}
+                      <div 
+                        
                         className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden rounded-2xl"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -190,9 +225,10 @@ updateCardName(Number(draggableId),destination.droppableId)
 
                         {/* ===================This Dropable is for task starts================== */}
 
-                        <Droppable droppableId={c.name} type="TASK">
+                        <Droppable  droppableId={c.name} type="TASK">
                           {(provided, snapshot) => (
                             <div
+                            
                               className="rounded-lg shadow-md shadow-lg bg-white  overflow-hidden"
                               // style={{ backgroundColor: "#FFFFFF" }}
                               ref={provided.innerRef}
@@ -328,7 +364,7 @@ updateCardName(Number(draggableId),destination.droppableId)
 
         {/* This Droppable is for  the cards Ends and inside it task droppable logic exist */}
       </DragDropContext>
-    </>
+    
   );
 };
 

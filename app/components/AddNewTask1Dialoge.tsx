@@ -43,7 +43,7 @@ const AddNewTask1Dialoge:React.FC<AddNewTask1DialogeProps>=({task1Model,task,set
 
 
   const handleTaskSubmit = async () => {
-    if (task.newTask != "") {
+    if (task.newTask != "" && task.category!="") {
       const { error } = await supabase
         .from("myTask")
         .insert({
@@ -57,10 +57,14 @@ const AddNewTask1Dialoge:React.FC<AddNewTask1DialogeProps>=({task1Model,task,set
         console.log(error.message);
       } else {
         toast.success("Task Added Successfully");
+        setTask({
+          newTask:"",
+          category:""
+        })
         task1Model.close()
       }
     } else {
-      toast.error("Fill The Feild");
+      toast.error("Fill All The Feild");
     }
   };
 
@@ -133,11 +137,11 @@ return(
                       </option>
                       {cards.map((c, i) => {
                         return (
-                          <>
-                            <option value={c.name} style={{ color: "black" }}>
+                        
+                            <option key={c.id} value={c.name} style={{ color: "black" }}>
                               {c.name}
                             </option>
-                          </>
+                        
                         );
                       })}
                     </select>

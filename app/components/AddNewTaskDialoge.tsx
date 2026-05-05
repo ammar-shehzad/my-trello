@@ -49,6 +49,7 @@ const handleTask2Submit = async () => {
         console.log(error.message);
       } else {
         toast.success("Task Added Successfully");
+        modal.close()
         // fetchdata();
       }
 
@@ -62,6 +63,7 @@ const handleTask2Submit = async () => {
       // setIsActiveId(null)
     } else {
       setErr2("Enter Your Task");
+      toast.error("Fill The Field")
     }
   };
 
@@ -103,7 +105,7 @@ return(
 
                   handleTask2Submit();
 
-                  modal.close();
+                  // modal.close();
                 }}
               >
                 <div className="flex flex-col space-y-1 my-8">

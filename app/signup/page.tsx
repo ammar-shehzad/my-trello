@@ -5,6 +5,7 @@ import { supabase } from "@/utils/supabase/client";
 import { redirect } from "next/dist/server/api-utils";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   let [user, setUser] = useState<{
@@ -12,9 +13,10 @@ export default function SignUp() {
     userEmail: string;
     userPassword: string;
   }>({ userName: "", userEmail: "", userPassword: "" });
+  let router=useRouter()
 
 const emailRegex =/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const nameRegex=/[a-zA-Z][a-zA-Z0-9-_]{4,24}/;
+const nameRegex=/[a-zA-Z]{2,24}/;
 
   const handleUserChange = (e: any) => {
     let { name, value } = e.target;
@@ -75,6 +77,10 @@ const { data, error } = await supabase
           userEmail: "",
           userPassword: "",
         });
+        setTimeout(() => {
+                  router.push("/login")
+
+        }, 2000);
       }
 
 
