@@ -12,6 +12,7 @@ import AddNewTask1Dialoge from "./components/AddNewTask1Dialoge";
 import AddNewCardsDialoge from "./components/AddNewCardsDialoge";
 import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
+import Sidebar from "./components/Sidebar";
 export default function Home() {
   let [task, setTask] = useState<{ newTask: any; category: any }>({
     newTask: "",
@@ -221,10 +222,33 @@ export default function Home() {
   }, []);
 
   if (loading) {
+
+
+    // ==========================Starting UI CHANGES============================
     return (
       <>
-        {/* Todo Task Form Starts */}
-        <MainHeader
+
+<div className="grid grid-cols-12 w-full min-h-screen grid-rows-[auto,1fr]">
+{/* main header */}
+{/* <div className="col-span-12 ">
+
+</div> */}
+
+{/* sidebar */}
+
+<div className="hidden lg:block col-span-2
+  bg-black/80
+//  bg-[#1F1F21]
+ ">
+<Sidebar task1Model={task1Model} Cardmodel={Cardmodel} />
+
+</div>
+
+{/* cards n tasks */}
+
+<div className="col-span-12 lg:col-span-10 md:col-span-10 ">
+
+    <MainHeader
           task={task}
           setTask={setTask}
           cards={cards}
@@ -237,10 +261,6 @@ export default function Home() {
           Cardmodel={Cardmodel}
           fetchdata={fetchdata}
         />
-
-        {/* Todo Task Form Ends */}
-
-        {/* Todo New Cards Starts */}
 
         <div className="container mx-auto my-3">
           <TodoCards
@@ -315,6 +335,23 @@ export default function Home() {
         {/* ==========================tailwind modal Ends============== */}
 
         {/*================= model box=============================== */}
+
+
+</div>
+
+
+
+</div>
+
+      
+        {/* Todo Task Form Starts */}
+      
+
+        {/* Todo Task Form Ends */}
+
+        {/* Todo New Cards Starts */}
+
+
       </>
     );
   } else {

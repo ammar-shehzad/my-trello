@@ -237,7 +237,7 @@ cardPos=prevCard.position+1024
       <Droppable droppableId="All-Columns" direction="horizontal" type="CARD">
         {(provided) => (
           <div
-            className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[70px] md:auto-cols-[70px] overflow-x-auto  gap-1 lg:gap-5 md:gap-5 rounded-lg  px-4 py-1 
+            className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[70px] md:auto-cols-[70px] overflow-x-auto  gap-1 lg:gap-5 md:gap-5 rounded-lg  px-4 py-1  mx-5
             // scrollbar stylling
              [&::-webkit-scrollbar]:h-2
     [&::-webkit-scrollbar-track]:bg-gray-100
