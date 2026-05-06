@@ -57,11 +57,15 @@ toast.error("Please Enter a Valid Email")
 
 
 
-        
         toast.success("Logged In Successfully");
         console.log("This Is Login Id : " + data[0].id);
         localStorage.setItem("user", data[0].id);
         localStorage.setItem("userName",data[0].userName);
+
+
+
+
+
         
             const { error } = await supabase
   .from('myUsers')
@@ -71,7 +75,57 @@ toast.error("Please Enter a Valid Email")
 if(error){
   toast.error(error.message)
 }else{
+
+
+
+// ===============fetching user cards======================
+
+
+const { data:fetchCard, error:fetchCardError } = await supabase
+        .from("myCards")
+        .select("*")
+        .eq("userId",localStorage.getItem("user") )
+        .in("cardName",["today","next week","later"]);
+
+      if (fetchCardError) {
+        console.log(fetchCardError.message);
+        return;
+      }
+
+      if (fetchCard?.length > 0) {
+        // toast.error("User Already Exist");
   router.push("/");
+
+        return;
+      }else{
+
+        let cardArr=["today","next week","later"]
+
+for(let i=0;i<cardArr.length;i++){
+        const {count,error:countError}=await supabase.from("myCards").select("*",{count:'exact',head:true})
+
+        
+
+
+      const { error } = await supabase.from("myCards").insert({
+        cardName:cardArr[i],
+        userId: localStorage.getItem("user"),
+        position:(count||0)+1000
+      });
+      }
+
+
+
+      router.push("/");
+
+}
+
+
+
+
+
+
+// ======================================================
 
 }
 

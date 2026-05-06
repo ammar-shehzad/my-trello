@@ -326,7 +326,7 @@ cardPos=prevCard.position+1024
                                           >
                                             <div className="col-span-9 truncate">
                                               {t.task}
-                                              {t.taskPosition}
+                                              {/* {t.taskPosition} */}
                                             </div>
 
                                             <div className="col-span-3 flex flex-row">
