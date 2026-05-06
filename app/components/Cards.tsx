@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { supabase } from "@/utils/supabase/client";
+import toast from "react-hot-toast";
 
 interface ICards {
   name: string;
@@ -82,18 +83,49 @@ const TodoCards: React.FC<MainCardsProps> = ({
       return;
 
     if (type === "CARD") {
-      let newCardsList = Array.from(cards);
+      // let newCardsList = Array.from(cards);
 
-  // const sortedCards = [...cards].sort((a, b) => a.position - b.position);
+    let sortedList = [...cards].sort((a, b) => a.position - b.position);
 
-  const prevCard = newCardsList[destination.index - (destination.index > source.index ? 0 : 1)];
-  const nextCard = newCardsList[destination.index + (destination.index > source.index ? 1 : 0)];
-
+    const [draggedCard] = sortedList.splice(source.index, 1);
 
 
-      let [dragCard] = newCardsList.splice(source.index, 1);
-      newCardsList.splice(destination.index, 0, dragCard);
-      setCards(newCardsList);
+
+   const prevCard = sortedList[destination.index - 1];
+  const nextCard = sortedList[destination.index];
+
+let cardPos:number
+
+
+if(!prevCard && !nextCard){
+  cardPos=1000
+}else if(!prevCard){
+  cardPos=nextCard.position/2
+}else if(!nextCard){
+cardPos=prevCard.position+1024
+}else{
+  cardPos=(prevCard.position+nextCard.position)/2
+}
+
+
+
+      // let [dragCard] = newCardsList.splice(source.index, 1);
+      const updatedCard={...draggedCard,position:cardPos}
+      sortedList.splice(destination.index, 0, updatedCard);
+      setCards(sortedList);
+
+      console.log("This Is Draggable Id Of CARDS"+draggableId)
+
+  const updateCardPosition = async () => {
+    const { error } = await supabase
+      .from('myCards')
+      .update({ position: cardPos })
+      .eq('id', Number(draggableId));
+      if(error){
+        toast.error(error.message)
+      }
+}
+  updateCardPosition()
       // =========================database changes=======
 
       //  try {
@@ -153,7 +185,7 @@ const TodoCards: React.FC<MainCardsProps> = ({
       } else if (!prevTask) {
         newPos = nextTask.taskPosition / 2;
       } else if (!nextTask) {
-        newPos = prevTask.taskPosition + 1024;
+        newPos = prevTask.taskPosition + 1;
       } else {
         newPos = (prevTask.taskPosition + nextTask.taskPosition) / 2;
       }
@@ -205,14 +237,24 @@ const TodoCards: React.FC<MainCardsProps> = ({
       <Droppable droppableId="All-Columns" direction="horizontal" type="CARD">
         {(provided) => (
           <div
-            className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[70px] md:auto-cols-[70px] overflow-x-auto  gap-1 lg:gap-5 md:gap-5 rounded-lg  px-4 py-1  "
+            className="grid grid-flow-col auto-cols-[70px] lg:auto-cols-[70px] md:auto-cols-[70px] overflow-x-auto  gap-1 lg:gap-5 md:gap-5 rounded-lg  px-4 py-1 
+            // scrollbar stylling
+             [&::-webkit-scrollbar]:h-2
+    [&::-webkit-scrollbar-track]:bg-gray-100
+    [&::-webkit-scrollbar-track]:rounded-lg
+    [&::-webkit-scrollbar-thumb]:bg-gray-400
+    [&::-webkit-scrollbar-thumb]:rounded-lg
+    [&::-webkit-scrollbar-thumb]:hover:bg-gray-500
+            
+            
+            "
             style={{ overflowX: "auto" }}
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
             {cards.map((c, i) => {
               return (
-                <Draggable key={c.id} draggableId={c.name} index={i}>
+                <Draggable key={c.id} draggableId={String(c.id)} index={i}>
                   {(provided) => (
                     <div
                       className="col-span-4 my-2 bg-white border border-gray-100 shadow-lg shadow-black/50 overflow-hidden rounded-2xl"
@@ -225,7 +267,8 @@ const TodoCards: React.FC<MainCardsProps> = ({
                         className="border-b-2 border-blue-500  px-1 py-1"
                       >
                         <h4 className="font-bold text-2xl mx-3 capitalize #F9FAFB  py-1">
-                          {c.name}
+                          {c.name} <br/>
+                          
                         </h4>
                       </div>
 
@@ -243,7 +286,26 @@ const TodoCards: React.FC<MainCardsProps> = ({
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                           >
-                            <div style={{ height: "50vh", overflowY: "auto" }}>
+                            <div
+                            className=" /* 1. Set Width & Height */
+    h-[50vh] overflow-y-auto 
+    
+    /* 2. Scrollbar Width (Thinner) */
+    [&::-webkit-scrollbar]:w-1.5 
+    
+    /* 3. Track Styling */
+    [&::-webkit-scrollbar-track]:bg-gray-100 
+    [&::-webkit-scrollbar-track]:rounded-full
+    
+    /* 4. Thumb/Draggable Part Styling */
+    [&::-webkit-scrollbar-thumb]:bg-blue-400 
+    [&::-webkit-scrollbar-thumb]:rounded-full
+    
+    /* 5. Hover Effect */
+    [&::-webkit-scrollbar-thumb:hover]:bg-blue-600
+    
+    rounded-lg px-4 py-1"
+                            style={{ height: "50vh", overflowY: "auto" }}>
                               <ul className="list-none space-y-2 mt-6 mr-7">
                                 {todos
                                   .filter((todos) => todos.period == c.id)
@@ -264,6 +326,7 @@ const TodoCards: React.FC<MainCardsProps> = ({
                                           >
                                             <div className="col-span-9 truncate">
                                               {t.task}
+                                              {t.taskPosition}
                                             </div>
 
                                             <div className="col-span-3 flex flex-row">
@@ -368,5 +431,6 @@ const TodoCards: React.FC<MainCardsProps> = ({
     </DragDropContext>
   );
 };
+
 
 export default TodoCards;

@@ -157,12 +157,15 @@ const avatarStyle = {
 
 
 {/* =========================this is the top Most Header================= */}
-        <div className="grid grid-cols-12  py-2 bg-[#1F1F21]">
-          <div className="col-span-2  my-2 flex">
+        <div className=" grid grid-cols-12  py-0 lg:py-2 md:py-2 bg-[#1F1F21]">
+          <div className="col-span-2  my-3 lg:my-2 md:my-2 flex">
             <span>
-              <i className="fa-brands fa-trello" style={{color: "rgb(169, 171, 175)"}}></i>
+              <i className="fa-brands fa-trello fa-xl" style={{color: "rgb(169, 171, 175)"}}></i>
             </span>
-            <h5 className="text-start font-semibold   text-[#A9ABAF]">
+            <h5 className="text-start font-semibold text-xl 
+              // text-[#A9ABAF]
+              text-white
+              ">
             Trello 
             </h5>
           </div>
@@ -185,7 +188,7 @@ const avatarStyle = {
 </div> */}
 
           </div>
-          <div className="col-span-3 my-3 flex justify-end">
+          <div className="col-span-2 lg:col-span-3 md:col-span-3 my-3 flex justify-end">
 
 <div className="relative inline-block text-left">
 
@@ -239,35 +242,35 @@ const avatarStyle = {
 {/* =========================this is the Second Most Header================= */}
 
 
-<div className="grid grid-cols-12  bg-[#1F1F21]/70">
-          <div className="col-span-2  my-2 flex">
+<div className="grid  grid-cols-12 lg:grid-cols-12 md:grid-cols-12   bg-[#1F1F21]/70  ">
+          <div className="col-span-2 lg:col-span-2 md:col-span-2 text-start my-2 ">
                 <button
-               className="button text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-linear-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-base text-sm px-7 py-2 text-center leading-5 rounded-lg"
+               className="button text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-linear-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-base text-sm px-7 py-2 lg:text-center  rounded-lg"
               onClick={() => {
                 task1Model.showModal();
               }}
             >
-              Add New Task
+              AddTask
             </button>
           </div>
-          <div className="col-span-7">
+          <div className=" col-span-6 lg:col-span-7 md:col-span-7 ">
 
 
           </div>
-          <div className="col-span-3 my-3 flex justify-end">
-<ul className="flex space-x-6">
+          <div className="col-span-2  mx-3.5  lg:col-span-3 md:col-span-3 text-end my-2 sm:mr-5 lg:mr-0">
+{/* <ul className="flex space-x-6">
   <li><span><i className="fa-solid fa-plug" style={{color: "white"}}></i></span></li>
   <li><i className="fa-solid fa-bolt" style={{color: "white"}}></i></li>
   <li><span><i className="fa-solid fa-star" style={{color: "white"}}></i></span></li>
   <li></li>
-</ul>
+</ul> */}
      <button
                className="button text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-linear-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-base text-sm px-7 py-2 text-center leading-5 rounded-lg"
               onClick={() => {
                 Cardmodel.showModal();
               }}
             >
-              Add New Card
+              AddCard
             </button>
 
           </div>

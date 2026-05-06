@@ -104,14 +104,14 @@ return(
                     text-black placeholder:text-gray-700 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#020344]"
                   />
                   <input
-                    type="text"
+                    type="hidden"
                     name="period"
                     value={editTask?.period}
                     onChange={handleEditTaskChange}
                     className="block w-full px-4 py-2 text-sm placeholder:text-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
                   />
                   <input
-                    type="text"
+                    type="hidden"
                     name="id"
                     value={editTask?.id}
                     onChange={handleEditTaskChange}

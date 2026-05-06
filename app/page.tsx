@@ -34,10 +34,12 @@ export default function Home() {
 
   let [cardName, setCardName] = useState<{ name: string }>({ name: "" });
   let [cards, setCards] = useState<{ name: any; id: any; position: any }[]>([
-    { name: "today", id: 0, position: 1001 },
-    { name: "Last Week", id: 1, position: 1001 },
-    { name: "Later", id: 2, position: 1001 },
+    // { name: "today", id: 0, position: 1000 },
+    // { name: "Last Week", id: 1, position: 1001 },
+    // { name: "Later", id: 2, position: 1002 },
   ]);
+
+  
   let [err, setErr] = useState<any>("");
 
   let [err2, setErr2] = useState<any>("");
@@ -145,9 +147,10 @@ export default function Home() {
             if (cardData?.length) {
               setCards((prev: any) => {
                 return [
-                  { name: "today", id: 0, position: 1001 },
-                  { name: "Last Week", id: 1, position: 1001 },
-                  { name: "Later", id: 2, position: 1001 },
+                  // { name: "today", id: 0, position: 1000 },
+                  // { name: "Last Week", id: 1, position: 1001 },
+                  // { name: "Later", id: 2, position: 1002 },
+                  // ...prev,
                   ...cardData.map((i) => ({
                     name: i.cardName,
                     id: i.id,
